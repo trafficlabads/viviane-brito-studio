@@ -14,7 +14,164 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      article_categories: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      articles: {
+        Row: {
+          category_id: string | null
+          content: string
+          cover_url: string | null
+          created_at: string
+          excerpt: string
+          id: string
+          published: boolean
+          published_at: string | null
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category_id?: string | null
+          content?: string
+          cover_url?: string | null
+          created_at?: string
+          excerpt?: string
+          id?: string
+          published?: boolean
+          published_at?: string | null
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string | null
+          content?: string
+          cover_url?: string | null
+          created_at?: string
+          excerpt?: string
+          id?: string
+          published?: boolean
+          published_at?: string | null
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "articles_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "article_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contact_messages: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          phone: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+          phone?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          phone?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
+      podcast_episodes: {
+        Row: {
+          amazon_music_url: string | null
+          apple_music_url: string | null
+          cover_url: string | null
+          created_at: string
+          description: string
+          episode_number: number | null
+          id: string
+          published: boolean
+          published_at: string | null
+          slug: string
+          soundcloud_url: string | null
+          spotify_url: string | null
+          title: string
+          updated_at: string
+          youtube_music_url: string | null
+          youtube_url: string | null
+        }
+        Insert: {
+          amazon_music_url?: string | null
+          apple_music_url?: string | null
+          cover_url?: string | null
+          created_at?: string
+          description?: string
+          episode_number?: number | null
+          id?: string
+          published?: boolean
+          published_at?: string | null
+          slug: string
+          soundcloud_url?: string | null
+          spotify_url?: string | null
+          title: string
+          updated_at?: string
+          youtube_music_url?: string | null
+          youtube_url?: string | null
+        }
+        Update: {
+          amazon_music_url?: string | null
+          apple_music_url?: string | null
+          cover_url?: string | null
+          created_at?: string
+          description?: string
+          episode_number?: number | null
+          id?: string
+          published?: boolean
+          published_at?: string | null
+          slug?: string
+          soundcloud_url?: string | null
+          spotify_url?: string | null
+          title?: string
+          updated_at?: string
+          youtube_music_url?: string | null
+          youtube_url?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
