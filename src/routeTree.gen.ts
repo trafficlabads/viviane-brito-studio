@@ -15,6 +15,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ArticlesRouteImport } from './routes/articles'
 import { Route as PodcastsRouteImport } from './routes/podcasts'
 import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
+import { Route as PodcastsSlugRouteImport } from './routes/podcasts.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,22 +47,29 @@ const ArticlesSlugRoute = ArticlesSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => ArticlesRoute,
 } as any)
+const PodcastsSlugRoute = PodcastsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => PodcastsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/articles': typeof ArticlesRouteWithChildren
-  '/podcasts': typeof PodcastsRoute
+  '/podcasts': typeof PodcastsRouteWithChildren
   '/articles/$slug': typeof ArticlesSlugRoute
+  '/podcasts/$slug': typeof PodcastsSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/articles': typeof ArticlesRouteWithChildren
-  '/podcasts': typeof PodcastsRoute
+  '/podcasts': typeof PodcastsRouteWithChildren
   '/articles/$slug': typeof ArticlesSlugRoute
+  '/podcasts/$slug': typeof PodcastsSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -69,15 +77,29 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
   '/articles': typeof ArticlesRouteWithChildren
-  '/podcasts': typeof PodcastsRoute
+  '/podcasts': typeof PodcastsRouteWithChildren
   '/articles/$slug': typeof ArticlesSlugRoute
+  '/podcasts/$slug': typeof PodcastsSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/about' | '/admin' | '/articles' | '/podcasts' | '/articles/$slug'
+    | '/'
+    | '/about'
+    | '/admin'
+    | '/articles'
+    | '/podcasts'
+    | '/articles/$slug'
+    | '/podcasts/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/admin' | '/articles' | '/podcasts' | '/articles/$slug'
+  to:
+    | '/'
+    | '/about'
+    | '/admin'
+    | '/articles'
+    | '/podcasts'
+    | '/articles/$slug'
+    | '/podcasts/$slug'
   id:
     | '__root__'
     | '/'
@@ -86,6 +108,7 @@ export interface FileRouteTypes {
     | '/articles'
     | '/podcasts'
     | '/articles/$slug'
+    | '/podcasts/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -93,7 +116,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRoute
   ArticlesRoute: typeof ArticlesRouteWithChildren
-  PodcastsRoute: typeof PodcastsRoute
+  PodcastsRoute: typeof PodcastsRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -140,6 +163,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArticlesSlugRouteImport
       parentRoute: typeof ArticlesRoute
     }
+    '/podcasts/$slug': {
+      id: '/podcasts/$slug'
+      path: '/$slug'
+      fullPath: '/podcasts/$slug'
+      preLoaderRoute: typeof PodcastsSlugRouteImport
+      parentRoute: typeof PodcastsRoute
+    }
   }
 }
 
@@ -155,12 +185,24 @@ const ArticlesRouteWithChildren = ArticlesRoute._addFileChildren(
   ArticlesRouteChildren,
 )
 
+interface PodcastsRouteChildren {
+  PodcastsSlugRoute: typeof PodcastsSlugRoute
+}
+
+const PodcastsRouteChildren: PodcastsRouteChildren = {
+  PodcastsSlugRoute: PodcastsSlugRoute,
+}
+
+const PodcastsRouteWithChildren = PodcastsRoute._addFileChildren(
+  PodcastsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AdminRoute: AdminRoute,
   ArticlesRoute: ArticlesRouteWithChildren,
-  PodcastsRoute: PodcastsRoute,
+  PodcastsRoute: PodcastsRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
