@@ -4,6 +4,28 @@ import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { getLatestEpisode } from "@/lib/content.functions";
 
+type SpotifyController = {
+  play: () => void;
+  pause: () => void;
+  destroy: () => void;
+  addListener: (event: "playback_update", callback: (event: { data: { isPaused: boolean } }) => void) => void;
+};
+
+type SpotifyIframeApi = {
+  createController: (
+    element: HTMLElement,
+    options: { uri: string; width: string; height: string },
+    callback: (controller: SpotifyController) => void,
+  ) => void;
+};
+
+declare global {
+  interface Window {
+    onSpotifyIframeApiReady?: (api: SpotifyIframeApi) => void;
+    SpotifyIframeApi?: SpotifyIframeApi;
+  }
+}
+
 export type Episode = {
   title: string;
   description: string;
@@ -40,6 +62,8 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
   const [expanded, setExpanded] = useState(false);
   const [playing, setPlaying] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const spotifyMountRef = useRef<HTMLDivElement>(null);
+  const spotifyControllerRef = useRef<SpotifyController | null>(null);
   const fetchLatest = useServerFn(getLatestEpisode);
   useEffect(() => {
     let active = true;
@@ -48,18 +72,30 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
   }, [fetchLatest]);
   const playEpisode = useCallback((next: Episode) => {
     setEpisode(next);
-    setExpanded(true);
-    setPlaying(true);
+    setExpanded(false);
+    setPlaying(false);
   }, []);
   const send = useCallback((command: "playVideo" | "pauseVideo") => {
     iframeRef.current?.contentWindow?.postMessage(JSON.stringify({ event: "command", func: command, args: [] }), "*");
   }, []);
   const toggle = () => {
     const next = !playing;
-    setPlaying(next);
+    if (spotifyId && spotifyControllerRef.current) {
+      if (next) spotifyControllerRef.current.play();
+      else spotifyControllerRef.current.pause();
+      setPlaying(next);
+      return;
+    }
     send(next ? "playVideo" : "pauseVideo");
+    setPlaying(next);
   };
-  const close = () => { send("pauseVideo"); setEpisode(null); setExpanded(false); setPlaying(false); };
+  const close = () => {
+    send("pauseVideo");
+    spotifyControllerRef.current?.pause();
+    setEpisode(null);
+    setExpanded(false);
+    setPlaying(false);
+  };
   const id = youtubeId(episode?.youtube_url);
   const spotifyId = spotifyEpisodeId(episode?.spotify_url);
   const links = useMemo(() => episode ? [
@@ -73,6 +109,53 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [expanded, episode]);
+  useEffect(() => {
+    spotifyControllerRef.current?.destroy();
+    spotifyControllerRef.current = null;
+    const mount = spotifyMountRef.current;
+    if (!spotifyId || !mount) return;
+
+    let active = true;
+    const createController = (api: SpotifyIframeApi) => {
+      if (!active || !spotifyMountRef.current) return;
+      spotifyMountRef.current.replaceChildren();
+      api.createController(
+        spotifyMountRef.current,
+        { uri: `spotify:episode:${spotifyId}`, width: "100%", height: "152" },
+        (controller) => {
+          if (!active) {
+            controller.destroy();
+            return;
+          }
+          spotifyControllerRef.current = controller;
+          controller.addListener("playback_update", ({ data }) => setPlaying(!data.isPaused));
+        },
+      );
+    };
+
+    if (window.SpotifyIframeApi) {
+      createController(window.SpotifyIframeApi);
+    } else {
+      const previousReady = window.onSpotifyIframeApiReady;
+      window.onSpotifyIframeApiReady = (api) => {
+        window.SpotifyIframeApi = api;
+        previousReady?.(api);
+        createController(api);
+      };
+      if (!document.querySelector('script[src="https://open.spotify.com/embed/iframe-api/v1"]')) {
+        const script = document.createElement("script");
+        script.src = "https://open.spotify.com/embed/iframe-api/v1";
+        script.async = true;
+        document.body.appendChild(script);
+      }
+    }
+
+    return () => {
+      active = false;
+      spotifyControllerRef.current?.destroy();
+      spotifyControllerRef.current = null;
+    };
+  }, [spotifyId]);
 
   return <PlayerContext.Provider value={{ playEpisode }}>
     {children}
@@ -92,7 +175,7 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
         </div>
       </div>
       {id && <iframe ref={iframeRef} className={expanded ? "podcast-video" : "podcast-video-hidden"} src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=${playing ? 1 : 0}&enablejsapi=1`} title={episode.title} allow="autoplay; encrypted-media"/>}
-      {!id && spotifyId && <iframe key={playing ? "spotify-playing" : "spotify-paused"} className={expanded ? "podcast-spotify" : "podcast-video-hidden"} src={`https://open.spotify.com/embed/episode/${spotifyId}?utm_source=generator${playing ? "&autoplay=1" : ""}`} title={`Ouvir ${episode.title} no Spotify`} allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="eager"/>}
+      {!id && spotifyId && <div className={expanded ? "podcast-spotify" : "podcast-video-hidden"} aria-label={`Ouvir ${episode.title} no Spotify`}><div ref={spotifyMountRef}/></div>}
       {expanded && <div className="relative z-[2] mt-7 flex flex-wrap justify-center gap-2">{links.filter(([, url]) => url).map(([name, url]) => <a key={name} href={url ?? "#"} target="_blank" rel="noreferrer" className="rounded-full border border-primary-foreground/25 px-4 py-2 text-sm hover:bg-primary-foreground/10">{name}</a>)}</div>}
     </div>}
   </PlayerContext.Provider>;
