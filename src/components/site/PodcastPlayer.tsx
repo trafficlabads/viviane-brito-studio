@@ -19,10 +19,23 @@ type SpotifyIframeApi = {
   ) => void;
 };
 
+type YTPlayer = {
+  playVideo: () => void;
+  pauseVideo: () => void;
+  destroy: () => void;
+};
+
+type YTApi = {
+  Player: new (element: HTMLElement, options: Record<string, unknown>) => YTPlayer;
+  PlayerState: { PLAYING: number; PAUSED: number; ENDED: number };
+};
+
 declare global {
   interface Window {
     onSpotifyIframeApiReady?: (api: SpotifyIframeApi) => void;
     SpotifyIframeApi?: SpotifyIframeApi;
+    YT?: YTApi;
+    onYouTubeIframeAPIReady?: () => void;
   }
 }
 
