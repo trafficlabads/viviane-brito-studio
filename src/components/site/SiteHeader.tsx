@@ -2,8 +2,10 @@ import { Link } from "@tanstack/react-router";
 import { ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useWhatsApp } from "@/components/site/WhatsAppDialog";
 
 export function SiteHeader() {
+  const { openWhatsApp } = useWhatsApp();
   const [open, setOpen] = useState(false);
   const [pagesOpen, setPagesOpen] = useState(false);
   const links = [
@@ -39,7 +41,7 @@ export function SiteHeader() {
           <Link to="/about" className="px-3 text-sm text-foreground/75">Sobre</Link>
           <Link to="/" hash="caminhos" className="px-3 text-sm text-foreground/75">Serviços</Link>
         </div>
-        <Link to="/" hash="contato" className="hidden md:block"><Button size="sm" className="rounded-full">Vamos conversar</Button></Link>
+        <Button size="sm" className="hidden rounded-full md:inline-flex" onClick={openWhatsApp}>Vamos conversar</Button>
         <button
           type="button"
           className={`menu-toggle relative grid size-9 place-items-center rounded-full md:hidden ${open ? "menu-toggle-open" : ""}`}
@@ -66,15 +68,14 @@ export function SiteHeader() {
               {item.label}
             </Link>
           ))}
-          <Link
-            to="/"
-            hash="contato"
-            onClick={() => setOpen(false)}
+          <button
+            type="button"
+            onClick={() => { setOpen(false); openWhatsApp(); }}
             className="mobile-menu-item mt-6 w-fit rounded-full bg-primary px-7 py-3.5 font-body text-base text-primary-foreground"
             style={{ transitionDelay: open ? `${120 + mobileItems.length * 70}ms` : "0ms" }}
           >
             Vamos conversar
-          </Link>
+          </button>
         </nav>
         <p className="mobile-menu-item mt-14 text-xs uppercase tracking-[0.3em] text-foreground/50" style={{ transitionDelay: open ? "680ms" : "0ms" }}>Psicologia e desenvolvimento humano</p>
       </div>

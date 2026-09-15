@@ -336,3 +336,12 @@ a:not(.podcast-feature), button { transition: color .55s ease, background-color 
 .rich-content h2 { font-family: var(--font-display); font-size: 2.1rem; margin: 2.4rem 0 1rem; }
 .rich-content figure { margin: 2.4rem 0; }
 .rich-content a { color: var(--primary); text-decoration: underline; }
+
+@keyframes whatsapp-pop {
+  from { opacity: 0; transform: translateY(24px) scale(.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.whatsapp-dialog { animation: whatsapp-pop .45s cubic-bezier(.22,.9,.3,1) both; }
+@media (prefers-reduced-motion: reduce) {
+  .whatsapp-dialog { animation: none; }
+}
