@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { ChevronDown, Maximize2, Pause, Play, X } from "lucide-react";
+import { useRouterState } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { getLatestEpisode } from "@/lib/content.functions";
@@ -79,11 +80,13 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
   const spotifyMountRef = useRef<HTMLDivElement>(null);
   const spotifyControllerRef = useRef<SpotifyController | null>(null);
   const fetchLatest = useServerFn(getLatestEpisode);
+  const isAdminRoute = useRouterState({ select: (s) => s.location.pathname.startsWith("/admin") });
   useEffect(() => {
+    if (isAdminRoute) return;
     let active = true;
     fetchLatest().then((latest) => { if (active && latest) setEpisode((current) => current ?? (latest as Episode)); }).catch(() => {});
     return () => { active = false; };
-  }, [fetchLatest]);
+  }, [fetchLatest, isAdminRoute]);
   const playEpisode = useCallback((next: Episode) => {
     setEpisode(next);
     setExpanded(false);
@@ -223,7 +226,7 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
 
   return <PlayerContext.Provider value={{ playEpisode }}>
     {children}
-    {episode && <div className={expanded ? "podcast-stage" : "podcast-dock"} role="dialog" aria-modal={expanded || undefined} aria-label={`Reproduzindo ${episode.title}`}>
+    {episode && !isAdminRoute && <div className={expanded ? "podcast-stage" : "podcast-dock"} role="dialog" aria-modal={expanded || undefined} aria-label={`Reproduzindo ${episode.title}`}>
       <div className="player-orbit orbit-one"/><div className="player-orbit orbit-two"/>
       <div className="podcast-player-inner">
         <div className="podcast-cover-wrap"><img src={episode.cover_url || "/podcast-cover-placeholder.jpg"} alt={`Capa de ${episode.title}`} className="podcast-cover"/></div>
