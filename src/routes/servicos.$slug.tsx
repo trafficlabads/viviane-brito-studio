@@ -1,3 +1,4 @@
+import { RichContent } from "@/components/site/RichContent";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
 import { SiteLayout } from "@/components/site/Layout";
@@ -35,7 +36,7 @@ function ServicePage() {
     </section>
     <section className="section pt-0">
       <Reveal className="assemble grid gap-10 lg:grid-cols-[1.15fr_.85fr] lg:items-start">
-        <div className="prose-viviane whitespace-pre-wrap !px-0">{service.content}</div>
+        <RichContent value={service.content} className="!px-0"/>
         <aside className="rounded-lg border bg-secondary p-8">
           <img src={service.cover_url || portrait} alt="" loading="lazy" className="aspect-[4/5] w-full rounded-lg object-cover" />
           <p className="mt-7 font-display text-3xl">{service.cta_label}</p>

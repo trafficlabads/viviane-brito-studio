@@ -1,6 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { ChevronDown, Maximize2, Pause, Play, X } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
+import { getLatestEpisode } from "@/lib/content.functions";
 
 export type Episode = {
   title: string;
@@ -38,6 +40,12 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
   const [expanded, setExpanded] = useState(false);
   const [playing, setPlaying] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const fetchLatest = useServerFn(getLatestEpisode);
+  useEffect(() => {
+    let active = true;
+    fetchLatest().then((latest) => { if (active && latest) setEpisode((current) => current ?? (latest as Episode)); }).catch(() => {});
+    return () => { active = false; };
+  }, [fetchLatest]);
   const playEpisode = useCallback((next: Episode) => {
     setEpisode(next);
     setExpanded(true);
@@ -49,6 +57,7 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
   const toggle = () => {
     const next = !playing;
     setPlaying(next);
+    if (next) setExpanded(true);
     send(next ? "playVideo" : "pauseVideo");
   };
   const close = () => { send("pauseVideo"); setEpisode(null); setExpanded(false); setPlaying(false); };
@@ -83,7 +92,7 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
           <Button variant="ghost" size="icon" className="rounded-full text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground" onClick={close} aria-label="Fechar player"><X/></Button>
         </div>
       </div>
-      {id && <iframe ref={iframeRef} className={expanded ? "podcast-video" : "podcast-video-hidden"} src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&enablejsapi=1`} title={episode.title} allow="autoplay; encrypted-media"/>}
+      {id && <iframe ref={iframeRef} className={expanded ? "podcast-video" : "podcast-video-hidden"} src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=${playing ? 1 : 0}&enablejsapi=1`} title={episode.title} allow="autoplay; encrypted-media"/>}
       {!id && spotifyId && <iframe className={expanded ? "podcast-spotify" : "podcast-video-hidden"} src={`https://open.spotify.com/embed/episode/${spotifyId}?utm_source=generator`} title={`Ouvir ${episode.title} no Spotify`} allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="eager"/>}
       {expanded && <div className="relative z-[2] mt-7 flex flex-wrap justify-center gap-2">{links.filter(([, url]) => url).map(([name, url]) => <a key={name} href={url ?? "#"} target="_blank" rel="noreferrer" className="rounded-full border border-primary-foreground/25 px-4 py-2 text-sm hover:bg-primary-foreground/10">{name}</a>)}</div>}
     </div>}

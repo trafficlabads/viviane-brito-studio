@@ -1,3 +1,4 @@
+import { RichContent } from "@/components/site/RichContent";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/site/Layout";
 import { Reveal } from "@/components/site/Reveal";
@@ -32,7 +33,7 @@ function TestimonialPage() {
         <p className="mt-6 text-lg text-muted-foreground">{t.name}{t.context && ` · ${t.context}`}</p>
       </header>
       {t.cover_url && <div className="mx-auto max-w-6xl px-6"><img src={t.cover_url} alt="" className="aspect-[16/8] w-full rounded-lg object-cover" /></div>}
-      <Reveal><div className="prose-viviane whitespace-pre-wrap">{t.content}</div></Reveal>
+      <Reveal><RichContent value={t.content}/></Reveal>
     </article>
   </SiteLayout>;
 }
