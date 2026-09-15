@@ -35,22 +35,42 @@ export const getAdminStatus = createServerFn({ method: "GET" }).handler(async ()
 
 export const getPublicContent = createServerFn({ method: "GET" }).handler(async () => {
   const db = await adminClient();
-  const [{ data: categories }, { data: articles }, { data: episodes }] = await Promise.all([
+  const [{ data: categories }, { data: articles }, { data: episodes }, { data: testimonials }, { data: services }] = await Promise.all([
     db.from("article_categories").select("id,name,slug").order("name"),
     db.from("articles").select("id,title,slug,excerpt,content,cover_url,published_at,category_id,article_categories(name,slug)").eq("published", true).order("published_at", { ascending: false }),
     db.from("podcast_episodes").select("*").eq("published", true).order("published_at", { ascending: false }),
+    db.from("testimonials").select("*").eq("published", true).order("order_index"),
+    db.from("service_pages").select("*").eq("published", true).order("order_index"),
   ]);
-  return { categories: categories ?? [], articles: articles ?? [], episodes: episodes ?? [] };
+  return { categories: categories ?? [], articles: articles ?? [], episodes: episodes ?? [], testimonials: testimonials ?? [], services: services ?? [] };
 });
 
 export const getAdminContent = createServerFn({ method: "GET" }).handler(async () => {
   await requireAdmin(); const db = await adminClient();
-  const [{ data: categories }, { data: articles }, { data: episodes }, { data: messages }] = await Promise.all([
+  const [{ data: categories }, { data: articles }, { data: episodes }, { data: messages }, { data: testimonials }, { data: services }] = await Promise.all([
     db.from("article_categories").select("*").order("name"), db.from("articles").select("*").order("created_at", { ascending: false }),
     db.from("podcast_episodes").select("*").order("created_at", { ascending: false }), db.from("contact_messages").select("*").order("created_at", { ascending: false }),
+    db.from("testimonials").select("*").order("order_index"), db.from("service_pages").select("*").order("order_index"),
   ]);
-  return { categories: categories ?? [], articles: articles ?? [], episodes: episodes ?? [], messages: messages ?? [] };
+  return { categories: categories ?? [], articles: articles ?? [], episodes: episodes ?? [], messages: messages ?? [], testimonials: testimonials ?? [], services: services ?? [] };
 });
+
+const testimonialSchema = z.object({ id: z.string().uuid().optional(), name: z.string().min(2), context: z.string(), quote: z.string(), content: z.string(), cover_url: z.string().nullable(), published: z.boolean(), order_index: z.number() });
+export const saveTestimonial = createServerFn({ method: "POST" }).inputValidator((d) => testimonialSchema.parse(d)).handler(async ({ data }) => {
+  await requireAdmin(); const db = await adminClient(); const { id: _id, ...fields } = data; const payload = { ...fields, slug: slugify(data.name) || `depoimento-${Date.now()}` };
+  const result = data.id ? await db.from("testimonials").update(payload).eq("id", data.id) : await db.from("testimonials").insert(payload);
+  if (result.error) throw new Error(result.error.message); return { ok: true };
+});
+export const deleteTestimonial = createServerFn({ method: "POST" }).inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d)).handler(async ({ data }) => {
+  await requireAdmin(); const db = await adminClient(); const { error } = await db.from("testimonials").delete().eq("id", data.id); if (error) throw new Error(error.message); return { ok: true };
+});
+const serviceSchema = z.object({ id: z.string().uuid().optional(), slug: z.string().min(2), title: z.string().min(2), subtitle: z.string(), intro: z.string(), content: z.string(), cover_url: z.string().nullable(), cta_label: z.string(), published: z.boolean(), order_index: z.number() });
+export const saveService = createServerFn({ method: "POST" }).inputValidator((d) => serviceSchema.parse(d)).handler(async ({ data }) => {
+  await requireAdmin(); const db = await adminClient(); const { id: _id, ...fields } = data;
+  const result = data.id ? await db.from("service_pages").update(fields).eq("id", data.id) : await db.from("service_pages").insert(fields);
+  if (result.error) throw new Error(result.error.message); return { ok: true };
+});
+
 
 const slugify = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 export const saveCategory = createServerFn({ method: "POST" }).inputValidator((d) => z.object({ id: z.string().uuid().optional(), name: z.string().min(2).max(80) }).parse(d)).handler(async ({ data }) => {
