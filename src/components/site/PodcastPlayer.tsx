@@ -126,6 +126,54 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [expanded, episode]);
   useEffect(() => {
+    ytPlayerRef.current?.destroy();
+    ytPlayerRef.current = null;
+    if (!id || !ytMountRef.current) return;
+
+    let active = true;
+    const createPlayer = () => {
+      const api = window.YT;
+      const mount = ytMountRef.current;
+      if (!active || !api?.Player || !mount) return;
+      mount.replaceChildren();
+      const host = document.createElement("div");
+      mount.appendChild(host);
+      ytPlayerRef.current = new api.Player(host, {
+        videoId: id,
+        host: "https://www.youtube-nocookie.com",
+        playerVars: { autoplay: 0, playsinline: 1, rel: 0, modestbranding: 1 },
+        events: {
+          onStateChange: (event: { data: number }) => {
+            if (event.data === api.PlayerState.PLAYING) setPlaying(true);
+            if (event.data === api.PlayerState.PAUSED || event.data === api.PlayerState.ENDED) setPlaying(false);
+          },
+        },
+      });
+    };
+
+    if (window.YT?.Player) {
+      createPlayer();
+    } else {
+      const previousReady = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => {
+        previousReady?.();
+        createPlayer();
+      };
+      if (!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
+        const script = document.createElement("script");
+        script.src = "https://www.youtube.com/iframe_api";
+        script.async = true;
+        document.body.appendChild(script);
+      }
+    }
+
+    return () => {
+      active = false;
+      ytPlayerRef.current?.destroy();
+      ytPlayerRef.current = null;
+    };
+  }, [id]);
+  useEffect(() => {
     spotifyControllerRef.current?.destroy();
     spotifyControllerRef.current = null;
     const mount = spotifyMountRef.current;
