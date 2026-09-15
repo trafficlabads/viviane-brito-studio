@@ -1,16 +1,83 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronDown, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { ChevronDown } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [pagesOpen, setPagesOpen] = useState(false);
-  const links = [{ to: "/", hash: "caminhos", label: "Serviços" }, { to: "/", hash: "artigos", label: "Artigos" }, { to: "/podcasts", label: "Podcast" }] as const;
-  return <header className="fixed inset-x-0 top-5 z-50 px-4"><nav className="relative mx-auto grid w-fit max-w-[calc(100vw-2rem)] grid-cols-[auto_auto] items-center rounded-full border border-foreground/15 bg-background/75 p-1 shadow-lg backdrop-blur-xl md:flex">
-    <Link to="/" aria-label="Viviane Brito — início" className="menu-monogram grid size-9 shrink-0 place-items-center rounded-full bg-secondary font-display text-sm text-primary">VB</Link>
-    <div className="hidden items-center md:flex"><div className="relative"><Button variant="ghost" size="sm" className="rounded-full font-normal text-foreground/75" onClick={()=>setPagesOpen(!pagesOpen)} aria-expanded={pagesOpen}>Todas as páginas <ChevronDown className={`size-3 transition-transform ${pagesOpen?"rotate-180":""}`}/></Button>{pagesOpen&&<div className="absolute left-0 top-11 grid min-w-56 gap-1 rounded-2xl border bg-background p-2 shadow-xl"><Link to="/" onClick={()=>setPagesOpen(false)} className="rounded-xl px-4 py-3 text-sm hover:bg-secondary">Início</Link><Link to="/about" onClick={()=>setPagesOpen(false)} className="rounded-xl px-4 py-3 text-sm hover:bg-secondary">Sobre Viviane</Link><Link to="/servicos/$slug" params={{slug:"grupos"}} onClick={()=>setPagesOpen(false)} className="rounded-xl px-4 py-3 text-sm hover:bg-secondary">Para Grupos</Link><Link to="/servicos/$slug" params={{slug:"pessoas"}} onClick={()=>setPagesOpen(false)} className="rounded-xl px-4 py-3 text-sm hover:bg-secondary">Para Pessoas</Link><Link to="/servicos/$slug" params={{slug:"empresas"}} onClick={()=>setPagesOpen(false)} className="rounded-xl px-4 py-3 text-sm hover:bg-secondary">Para Empresas</Link><Link to="/articles" onClick={()=>setPagesOpen(false)} className="rounded-xl px-4 py-3 text-sm hover:bg-secondary">Todos os artigos</Link><Link to="/depoimentos" onClick={()=>setPagesOpen(false)} className="rounded-xl px-4 py-3 text-sm hover:bg-secondary">Depoimentos</Link><Link to="/podcasts" onClick={()=>setPagesOpen(false)} className="rounded-xl px-4 py-3 text-sm hover:bg-secondary">Todos os episódios</Link></div>}</div><Link to="/about" className="px-3 text-sm text-foreground/75">Sobre</Link><Link to="/" hash="caminhos" className="px-3 text-sm text-foreground/75">Serviços</Link></div>
-    <Link to="/" hash="contato" className="hidden md:block"><Button size="sm" className="rounded-full">Vamos conversar</Button></Link>
-    <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setOpen(!open)} aria-label={open ? "Fechar menu" : "Abrir menu"}>{open ? <X/> : <Menu/>}</Button>
-    {open && <div className="absolute left-0 right-0 top-14 grid min-w-72 gap-1 rounded-2xl border bg-background p-3 shadow-xl md:hidden"><Link to="/" onClick={() => setOpen(false)} className="rounded-xl px-3 py-3">Início</Link><Link to="/about" onClick={() => setOpen(false)} className="rounded-xl px-3 py-3">Sobre</Link>{links.map(l => <Link key={l.label} to={l.to} {...("hash" in l ? { hash: l.hash } : {})} onClick={() => setOpen(false)} className="rounded-xl px-3 py-3">{l.label}</Link>)}<Link to="/" hash="contato" onClick={() => setOpen(false)} className="rounded-xl bg-primary px-3 py-3 text-primary-foreground">Vamos conversar</Link></div>}
-  </nav></header>;
+  const links = [
+    { to: "/", hash: "caminhos", label: "Serviços" },
+    { to: "/", hash: "artigos", label: "Artigos" },
+    { to: "/", hash: "depoimentos", label: "Depoimentos" },
+    { to: "/podcasts", label: "Podcast" },
+  ] as const;
+
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [open]);
+
+  const mobileItems = [
+    { to: "/", label: "Início" },
+    { to: "/about", label: "Sobre Viviane" },
+    { to: "/", hash: "caminhos", label: "Serviços" },
+    { to: "/", hash: "artigos", label: "Artigos" },
+    { to: "/", hash: "depoimentos", label: "Depoimentos" },
+    { to: "/podcasts", label: "Todos os episódios" },
+  ] as const;
+
+  return (
+    <header className="fixed inset-x-0 top-5 z-50 px-4">
+      <nav className="relative mx-auto grid w-fit max-w-[calc(100vw-2rem)] grid-cols-[auto_auto] items-center rounded-full border border-foreground/15 bg-background/75 p-1 shadow-lg backdrop-blur-xl md:flex">
+        <Link to="/" aria-label="Viviane Brito — início" onClick={() => setOpen(false)} className="menu-monogram grid size-9 shrink-0 place-items-center rounded-full bg-secondary font-display text-sm text-primary">VB</Link>
+        <div className="hidden items-center md:flex">
+          <div className="relative">
+            <Button variant="ghost" size="sm" className="rounded-full font-normal text-foreground/75" onClick={() => setPagesOpen(!pagesOpen)} aria-expanded={pagesOpen}>Todas as páginas <ChevronDown className={`size-3 transition-transform ${pagesOpen ? "rotate-180" : ""}`}/></Button>
+            {pagesOpen && <div className="absolute left-0 top-11 grid min-w-56 gap-1 rounded-2xl border bg-background p-2 shadow-xl"><Link to="/" onClick={() => setPagesOpen(false)} className="rounded-xl px-4 py-3 text-sm hover:bg-secondary">Início</Link><Link to="/about" onClick={() => setPagesOpen(false)} className="rounded-xl px-4 py-3 text-sm hover:bg-secondary">Sobre Viviane</Link><Link to="/servicos/$slug" params={{ slug: "grupos" }} onClick={() => setPagesOpen(false)} className="rounded-xl px-4 py-3 text-sm hover:bg-secondary">Para Grupos</Link><Link to="/servicos/$slug" params={{ slug: "pessoas" }} onClick={() => setPagesOpen(false)} className="rounded-xl px-4 py-3 text-sm hover:bg-secondary">Para Pessoas</Link><Link to="/servicos/$slug" params={{ slug: "empresas" }} onClick={() => setPagesOpen(false)} className="rounded-xl px-4 py-3 text-sm hover:bg-secondary">Para Empresas</Link><Link to="/articles" onClick={() => setPagesOpen(false)} className="rounded-xl px-4 py-3 text-sm hover:bg-secondary">Todos os artigos</Link><Link to="/depoimentos" onClick={() => setPagesOpen(false)} className="rounded-xl px-4 py-3 text-sm hover:bg-secondary">Depoimentos</Link><Link to="/podcasts" onClick={() => setPagesOpen(false)} className="rounded-xl px-4 py-3 text-sm hover:bg-secondary">Todos os episódios</Link></div>}
+          </div>
+          <Link to="/about" className="px-3 text-sm text-foreground/75">Sobre</Link>
+          <Link to="/" hash="caminhos" className="px-3 text-sm text-foreground/75">Serviços</Link>
+        </div>
+        <Link to="/" hash="contato" className="hidden md:block"><Button size="sm" className="rounded-full">Vamos conversar</Button></Link>
+        <button
+          type="button"
+          className={`menu-toggle relative grid size-9 place-items-center rounded-full md:hidden ${open ? "menu-toggle-open" : ""}`}
+          onClick={() => setOpen(!open)}
+          aria-label={open ? "Fechar menu" : "Abrir menu"}
+          aria-expanded={open}
+        >
+          <span className="menu-toggle-line" />
+          <span className="menu-toggle-line" />
+        </button>
+      </nav>
+
+      <div className={`mobile-menu fixed inset-0 -z-10 flex flex-col justify-center bg-background/40 px-8 backdrop-blur-2xl md:hidden ${open ? "mobile-menu-open pointer-events-auto" : "pointer-events-none"}`} aria-hidden={!open}>
+        <nav className="grid gap-2" aria-label="Menu principal">
+          {mobileItems.map((item, i) => (
+            <Link
+              key={item.label}
+              to={item.to}
+              {...("hash" in item ? { hash: item.hash } : {})}
+              onClick={() => setOpen(false)}
+              className="mobile-menu-item font-display text-4xl text-foreground"
+              style={{ transitionDelay: open ? `${120 + i * 70}ms` : "0ms" }}
+            >
+              {item.label}
+            </Link>
+          ))}
+          <Link
+            to="/"
+            hash="contato"
+            onClick={() => setOpen(false)}
+            className="mobile-menu-item mt-6 w-fit rounded-full bg-primary px-7 py-3.5 font-body text-base text-primary-foreground"
+            style={{ transitionDelay: open ? `${120 + mobileItems.length * 70}ms` : "0ms" }}
+          >
+            Vamos conversar
+          </Link>
+        </nav>
+        <p className="mobile-menu-item mt-14 text-xs uppercase tracking-[0.3em] text-foreground/50" style={{ transitionDelay: open ? "680ms" : "0ms" }}>Psicologia e desenvolvimento humano</p>
+      </div>
+    </header>
+  );
 }
