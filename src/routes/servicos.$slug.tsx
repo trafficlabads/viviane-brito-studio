@@ -1,8 +1,9 @@
 import { RichContent } from "@/components/site/RichContent";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, MessageCircle } from "lucide-react";
 import { SiteLayout } from "@/components/site/Layout";
 import { Reveal } from "@/components/site/Reveal";
+import { useWhatsApp } from "@/components/site/WhatsAppDialog";
 import { getPublicContent } from "@/lib/content.functions";
 import portrait from "@/assets/viviane-portrait.jpg";
 
@@ -27,6 +28,7 @@ export const Route = createFileRoute("/servicos/$slug")({
 
 function ServicePage() {
   const { service, services } = Route.useLoaderData();
+  const { openWhatsApp } = useWhatsApp();
   const others = services.filter((s) => s.slug !== service.slug);
   return <SiteLayout>
     <section className="page-hero">
@@ -40,7 +42,7 @@ function ServicePage() {
         <aside className="rounded-lg border bg-secondary p-8">
           <img src={service.cover_url || portrait} alt="" loading="lazy" className="aspect-[4/5] w-full rounded-lg object-cover" />
           <p className="mt-7 font-display text-3xl">{service.cta_label}</p>
-          <Link to="/" hash="contato" className="mt-5 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm text-primary-foreground">Enviar mensagem <ArrowUpRight className="size-4" /></Link>
+          <button type="button" onClick={openWhatsApp} className="mt-5 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm text-primary-foreground">Chamar no WhatsApp <MessageCircle className="size-4" /></button>
         </aside>
       </Reveal>
     </section>
