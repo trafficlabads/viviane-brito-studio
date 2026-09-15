@@ -190,7 +190,7 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
           <Button variant="ghost" size="icon" className="rounded-full text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground" onClick={close} aria-label="Fechar player"><X/></Button>
         </div>
       </div>
-      {id && <iframe ref={iframeRef} className={expanded ? "podcast-video" : "podcast-video-hidden"} src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=${playing ? 1 : 0}&enablejsapi=1`} title={episode.title} allow="autoplay; encrypted-media"/>}
+      {id && <div className={expanded ? "podcast-video" : "podcast-video-hidden"} aria-label={`Ouvir ${episode.title}`}><div ref={ytMountRef}/></div>}
       {!id && spotifyId && <div className={expanded ? "podcast-spotify" : "podcast-video-hidden"} aria-label={`Ouvir ${episode.title} no Spotify`}><div ref={spotifyMountRef}/></div>}
       {expanded && <div className="relative z-[2] mt-7 flex flex-wrap justify-center gap-2">{links.filter(([, url]) => url).map(([name, url]) => <a key={name} href={url ?? "#"} target="_blank" rel="noreferrer" className="rounded-full border border-primary-foreground/25 px-4 py-2 text-sm hover:bg-primary-foreground/10">{name}</a>)}</div>}
     </div>}
