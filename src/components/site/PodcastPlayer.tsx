@@ -74,7 +74,8 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
   const [episode, setEpisode] = useState<Episode | null>(null);
   const [expanded, setExpanded] = useState(false);
   const [playing, setPlaying] = useState(false);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const ytMountRef = useRef<HTMLDivElement>(null);
+  const ytPlayerRef = useRef<YTPlayer | null>(null);
   const spotifyMountRef = useRef<HTMLDivElement>(null);
   const spotifyControllerRef = useRef<SpotifyController | null>(null);
   const fetchLatest = useServerFn(getLatestEpisode);
