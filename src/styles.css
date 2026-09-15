@@ -256,3 +256,61 @@ a:not(.podcast-feature), button { transition: color .55s ease, background-color 
 }
 @keyframes section-assemble { from { opacity:.38; transform:translateY(54px) scale(.985); filter:blur(4px); } to { opacity:1; transform:none; filter:none; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior:auto; } main > section,main > .marquee { animation:none; } .reveal,.assemble > * { opacity:1; transform:none; filter:none; transition:none; } .testimonial-more { opacity:1; transform:none; } .player-orbit,.marquee-track { animation:none; } }
+
+/* Mobile menu */
+.menu-toggle {
+  color: var(--foreground);
+  transition: background-color 400ms ease;
+}
+.menu-toggle-line {
+  position: absolute;
+  width: 18px;
+  height: 1.5px;
+  border-radius: 999px;
+  background: currentColor;
+  transition: transform 500ms cubic-bezier(.16,.72,.2,1), width 400ms ease, background-color 400ms ease;
+  transform: translateY(-4px);
+}
+.menu-toggle-line:last-child {
+  transform: translateY(4px);
+  width: 12px;
+  margin-left: 6px;
+}
+@media (hover:hover) {
+  .menu-toggle:hover { background: color-mix(in oklab, var(--secondary) 70%, transparent); }
+  .menu-toggle:hover .menu-toggle-line:last-child { width: 18px; margin-left: 0; }
+}
+.menu-toggle-open .menu-toggle-line:first-child { transform: translateY(0) rotate(45deg); }
+.menu-toggle-open .menu-toggle-line:last-child { transform: translateY(0) rotate(-45deg); width: 18px; margin-left: 0; }
+
+.mobile-menu {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 700ms ease, visibility 0s linear 700ms;
+}
+.mobile-menu-open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 700ms ease;
+}
+.mobile-menu-item {
+  opacity: 0;
+  transform: translateY(26px);
+  filter: blur(6px);
+  transition: opacity 900ms ease, transform 1s cubic-bezier(.16,.72,.2,1), filter 800ms ease;
+}
+.mobile-menu-open .mobile-menu-item {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-menu,
+  .mobile-menu-item,
+  .menu-toggle-line { transition: none !important; }
+  .mobile-menu-item { opacity: 1; transform: none; filter: none; }
+  .mobile-menu { visibility: hidden; }
+  .mobile-menu-open { visibility: visible; }
+  .mobile-menu:not(.mobile-menu-open) .mobile-menu-item { opacity: 0; }
+}
