@@ -16,7 +16,9 @@ import { Route as ArticlesRouteImport } from './routes/articles'
 import { Route as PodcastsRouteImport } from './routes/podcasts'
 import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
 import { Route as DepoimentosIndexRouteImport } from './routes/depoimentos.index'
+import { Route as DepoimentosSlugRouteImport } from './routes/depoimentos.$slug'
 import { Route as PodcastsSlugRouteImport } from './routes/podcasts.$slug'
+import { Route as ServicosSlugRouteImport } from './routes/servicos.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -53,10 +55,20 @@ const DepoimentosIndexRoute = DepoimentosIndexRouteImport.update({
   path: '/depoimentos/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DepoimentosSlugRoute = DepoimentosSlugRouteImport.update({
+  id: '/depoimentos/$slug',
+  path: '/depoimentos/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PodcastsSlugRoute = PodcastsSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
   getParentRoute: () => PodcastsRoute,
+} as any)
+const ServicosSlugRoute = ServicosSlugRouteImport.update({
+  id: '/servicos/$slug',
+  path: '/servicos/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -66,7 +78,9 @@ export interface FileRoutesByFullPath {
   '/articles': typeof ArticlesRouteWithChildren
   '/podcasts': typeof PodcastsRouteWithChildren
   '/articles/$slug': typeof ArticlesSlugRoute
+  '/depoimentos/$slug': typeof DepoimentosSlugRoute
   '/podcasts/$slug': typeof PodcastsSlugRoute
+  '/servicos/$slug': typeof ServicosSlugRoute
   '/depoimentos/': typeof DepoimentosIndexRoute
 }
 export interface FileRoutesByTo {
@@ -76,7 +90,9 @@ export interface FileRoutesByTo {
   '/articles': typeof ArticlesRouteWithChildren
   '/podcasts': typeof PodcastsRouteWithChildren
   '/articles/$slug': typeof ArticlesSlugRoute
+  '/depoimentos/$slug': typeof DepoimentosSlugRoute
   '/podcasts/$slug': typeof PodcastsSlugRoute
+  '/servicos/$slug': typeof ServicosSlugRoute
   '/depoimentos': typeof DepoimentosIndexRoute
 }
 export interface FileRoutesById {
@@ -87,7 +103,9 @@ export interface FileRoutesById {
   '/articles': typeof ArticlesRouteWithChildren
   '/podcasts': typeof PodcastsRouteWithChildren
   '/articles/$slug': typeof ArticlesSlugRoute
+  '/depoimentos/$slug': typeof DepoimentosSlugRoute
   '/podcasts/$slug': typeof PodcastsSlugRoute
+  '/servicos/$slug': typeof ServicosSlugRoute
   '/depoimentos/': typeof DepoimentosIndexRoute
 }
 export interface FileRouteTypes {
@@ -99,7 +117,9 @@ export interface FileRouteTypes {
     | '/articles'
     | '/podcasts'
     | '/articles/$slug'
+    | '/depoimentos/$slug'
     | '/podcasts/$slug'
+    | '/servicos/$slug'
     | '/depoimentos/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -109,7 +129,9 @@ export interface FileRouteTypes {
     | '/articles'
     | '/podcasts'
     | '/articles/$slug'
+    | '/depoimentos/$slug'
     | '/podcasts/$slug'
+    | '/servicos/$slug'
     | '/depoimentos'
   id:
     | '__root__'
@@ -119,7 +141,9 @@ export interface FileRouteTypes {
     | '/articles'
     | '/podcasts'
     | '/articles/$slug'
+    | '/depoimentos/$slug'
     | '/podcasts/$slug'
+    | '/servicos/$slug'
     | '/depoimentos/'
   fileRoutesById: FileRoutesById
 }
@@ -129,6 +153,8 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   ArticlesRoute: typeof ArticlesRouteWithChildren
   PodcastsRoute: typeof PodcastsRouteWithChildren
+  DepoimentosSlugRoute: typeof DepoimentosSlugRoute
+  ServicosSlugRoute: typeof ServicosSlugRoute
   DepoimentosIndexRoute: typeof DepoimentosIndexRoute
 }
 
@@ -183,12 +209,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DepoimentosIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/depoimentos/$slug': {
+      id: '/depoimentos/$slug'
+      path: '/depoimentos/$slug'
+      fullPath: '/depoimentos/$slug'
+      preLoaderRoute: typeof DepoimentosSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/podcasts/$slug': {
       id: '/podcasts/$slug'
       path: '/$slug'
       fullPath: '/podcasts/$slug'
       preLoaderRoute: typeof PodcastsSlugRouteImport
       parentRoute: typeof PodcastsRoute
+    }
+    '/servicos/$slug': {
+      id: '/servicos/$slug'
+      path: '/servicos/$slug'
+      fullPath: '/servicos/$slug'
+      preLoaderRoute: typeof ServicosSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -223,6 +263,8 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   ArticlesRoute: ArticlesRouteWithChildren,
   PodcastsRoute: PodcastsRouteWithChildren,
+  DepoimentosSlugRoute: DepoimentosSlugRoute,
+  ServicosSlugRoute: ServicosSlugRoute,
   DepoimentosIndexRoute: DepoimentosIndexRoute,
 }
 export const routeTree = rootRouteImport

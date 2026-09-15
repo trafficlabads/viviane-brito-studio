@@ -15,11 +15,12 @@ import articlePath from "@/assets/article-path.jpg";
 import articleCareer from "@/assets/article-career.jpg";
 import articleConnection from "@/assets/article-connection.jpg";
 
-const pathways: Array<{ icon: LucideIcon; title: string; text: string; cta: string }> = [
-  { icon: Leaf, title: "Para Grupos", text: "Jornadas e grupos terapêuticos para quem quer se desenvolver junto com outras pessoas — porque há descobertas que só acontecem no encontro.", cta: "Conheça as jornadas" },
-  { icon: HeartHandshake, title: "Para Pessoas", text: "Psicoterapia, desenvolvimento de carreira e orientação vocacional para compreender sua história, fortalecer sua autonomia e construir escolhas alinhadas.", cta: "Saiba mais" },
-  { icon: Building2, title: "Para Empresas", text: "Palestras, treinamentos e projetos de desenvolvimento humano, construídos por quem viveu mais de 20 anos dentro das organizações.", cta: "Conheça as soluções" },
+const pathways: Array<{ icon: LucideIcon; slug: string; title: string; text: string; cta: string }> = [
+  { icon: Leaf, slug: "grupos", title: "Para Grupos", text: "Jornadas e grupos terapêuticos para quem quer se desenvolver junto com outras pessoas — porque há descobertas que só acontecem no encontro.", cta: "Conheça as jornadas" },
+  { icon: HeartHandshake, slug: "pessoas", title: "Para Pessoas", text: "Psicoterapia, desenvolvimento de carreira e orientação vocacional para compreender sua história, fortalecer sua autonomia e construir escolhas alinhadas.", cta: "Saiba mais" },
+  { icon: Building2, slug: "empresas", title: "Para Empresas", text: "Palestras, treinamentos e projetos de desenvolvimento humano, construídos por quem viveu mais de 20 anos dentro das organizações.", cta: "Conheça as soluções" },
 ];
+
 
 export const Route = createFileRoute("/")({
   loader: () => getPublicContent(),
