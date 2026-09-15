@@ -196,9 +196,26 @@ a:not(.podcast-feature), button { transition: color .55s ease, background-color 
 .bg-article-overlay { background: linear-gradient(to top, color-mix(in oklab, var(--primary) 90%, transparent), color-mix(in oklab, var(--primary) 8%, transparent) 72%); }
 .field { width: 100%; border: 1px solid var(--border); border-radius: var(--radius); background: var(--background); padding: .95rem 1rem; color: var(--foreground); outline: none; }
 .field:focus { border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 15%, transparent); }
-.reveal { opacity: 0; transform: translateY(42px) scale(.99); filter: blur(3px); transition: opacity 1.6s ease, transform 1.8s cubic-bezier(.16,.72,.2,1), filter 1.5s ease; }
+.reveal { opacity: 0; transform: translateY(42px) scale(.99); filter: blur(3px); transition: opacity 1.6s ease, transform 1.8s cubic-bezier(.16,.72,.2,1), filter 1.5s ease; transition-delay: var(--reveal-delay, 0ms); }
 .reveal.is-visible { opacity: 1; transform: none; }
 .reveal.is-visible { filter: none; }
+/* grids que se montam peça por peça */
+.assemble > * { opacity: 0; transform: translateY(46px) scale(.985); filter: blur(4px); transition: opacity 1.5s ease, transform 1.7s cubic-bezier(.16,.72,.2,1), filter 1.4s ease; }
+.assemble.is-visible > * { opacity: 1; transform: none; filter: none; }
+.assemble > *:nth-child(2) { transition-delay: .22s; }
+.assemble > *:nth-child(3) { transition-delay: .44s; }
+.assemble > *:nth-child(4) { transition-delay: .66s; }
+.assemble > *:nth-child(5) { transition-delay: .88s; }
+.assemble > *:nth-child(6) { transition-delay: 1.1s; }
+.testimonial-card { transition: transform 700ms cubic-bezier(.16,.72,.2,1), box-shadow 700ms ease; }
+.testimonial-card img { transition: transform 1.2s cubic-bezier(.16,.72,.2,1), filter 700ms ease; }
+@media (hover: hover) {
+  .testimonial-card:hover { transform: translateY(-8px); box-shadow: 0 30px 60px -30px color-mix(in oklab, var(--primary) 55%, transparent); }
+  .testimonial-card:hover img { transform: scale(1.06); filter: saturate(1.05); }
+  .testimonial-card:hover .testimonial-more { opacity: 1; transform: none; }
+}
+.testimonial-more { opacity: 0; transform: translateY(10px); transition: opacity 600ms ease, transform 700ms ease; }
+
 .story-link { position: relative; }
 .story-link::after { content:""; position:absolute; left:0; right:0; bottom:-4px; height:1px; background:var(--primary); transform:scaleX(0); transform-origin:right; transition:transform .3s; }
 .story-link:hover::after { transform:scaleX(1); transform-origin:left; }
