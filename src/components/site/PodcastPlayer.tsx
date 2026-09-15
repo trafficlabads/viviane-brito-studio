@@ -92,7 +92,7 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
         </div>
       </div>
       {id && <iframe ref={iframeRef} className={expanded ? "podcast-video" : "podcast-video-hidden"} src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=${playing ? 1 : 0}&enablejsapi=1`} title={episode.title} allow="autoplay; encrypted-media"/>}
-      {!id && spotifyId && <iframe className={expanded ? "podcast-spotify" : "podcast-video-hidden"} src={`https://open.spotify.com/embed/episode/${spotifyId}?utm_source=generator`} title={`Ouvir ${episode.title} no Spotify`} allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="eager"/>}
+      {!id && spotifyId && <iframe key={playing ? "spotify-playing" : "spotify-paused"} className={expanded ? "podcast-spotify" : "podcast-video-hidden"} src={`https://open.spotify.com/embed/episode/${spotifyId}?utm_source=generator${playing ? "&autoplay=1" : ""}`} title={`Ouvir ${episode.title} no Spotify`} allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="eager"/>}
       {expanded && <div className="relative z-[2] mt-7 flex flex-wrap justify-center gap-2">{links.filter(([, url]) => url).map(([name, url]) => <a key={name} href={url ?? "#"} target="_blank" rel="noreferrer" className="rounded-full border border-primary-foreground/25 px-4 py-2 text-sm hover:bg-primary-foreground/10">{name}</a>)}</div>}
     </div>}
   </PlayerContext.Provider>;
