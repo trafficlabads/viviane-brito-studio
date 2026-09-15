@@ -22,6 +22,11 @@ function youtubeId(url?: string | null) {
   return url.match(/(?:youtu\.be\/|v=|embed\/)([\w-]{11})/)?.[1] ?? null;
 }
 
+function spotifyEpisodeId(url?: string | null) {
+  if (!url) return null;
+  return url.match(/episode\/([A-Za-z0-9]+)/)?.[1] ?? null;
+}
+
 export function usePodcastPlayer() {
   const value = useContext(PlayerContext);
   if (!value) throw new Error("PodcastPlayerProvider ausente");
@@ -48,6 +53,7 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
   };
   const close = () => { send("pauseVideo"); setEpisode(null); setExpanded(false); setPlaying(false); };
   const id = youtubeId(episode?.youtube_url);
+  const spotifyId = spotifyEpisodeId(episode?.spotify_url);
   const links = useMemo(() => episode ? [
     ["Spotify", episode.spotify_url], ["SoundCloud", episode.soundcloud_url],
     ["YouTube Music", episode.youtube_music_url], ["Amazon Music", episode.amazon_music_url],
@@ -78,6 +84,7 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
         </div>
       </div>
       {id && <iframe ref={iframeRef} className={expanded ? "podcast-video" : "podcast-video-hidden"} src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&enablejsapi=1`} title={episode.title} allow="autoplay; encrypted-media"/>}
+      {!id && spotifyId && <iframe className={expanded ? "podcast-spotify" : "podcast-video-hidden"} src={`https://open.spotify.com/embed/episode/${spotifyId}?utm_source=generator`} title={`Ouvir ${episode.title} no Spotify`} allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="eager"/>}
       {expanded && <div className="relative z-[2] mt-7 flex flex-wrap justify-center gap-2">{links.filter(([, url]) => url).map(([name, url]) => <a key={name} href={url ?? "#"} target="_blank" rel="noreferrer" className="rounded-full border border-primary-foreground/25 px-4 py-2 text-sm hover:bg-primary-foreground/10">{name}</a>)}</div>}
     </div>}
   </PlayerContext.Provider>;
