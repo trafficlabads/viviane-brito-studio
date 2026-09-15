@@ -19,10 +19,23 @@ type SpotifyIframeApi = {
   ) => void;
 };
 
+type YTPlayer = {
+  playVideo: () => void;
+  pauseVideo: () => void;
+  destroy: () => void;
+};
+
+type YTApi = {
+  Player: new (element: HTMLElement, options: Record<string, unknown>) => YTPlayer;
+  PlayerState: { PLAYING: number; PAUSED: number; ENDED: number };
+};
+
 declare global {
   interface Window {
     onSpotifyIframeApiReady?: (api: SpotifyIframeApi) => void;
     SpotifyIframeApi?: SpotifyIframeApi;
+    YT?: YTApi;
+    onYouTubeIframeAPIReady?: () => void;
   }
 }
 
@@ -61,7 +74,8 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
   const [episode, setEpisode] = useState<Episode | null>(null);
   const [expanded, setExpanded] = useState(false);
   const [playing, setPlaying] = useState(false);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const ytMountRef = useRef<HTMLDivElement>(null);
+  const ytPlayerRef = useRef<YTPlayer | null>(null);
   const spotifyMountRef = useRef<HTMLDivElement>(null);
   const spotifyControllerRef = useRef<SpotifyController | null>(null);
   const fetchLatest = useServerFn(getLatestEpisode);
@@ -75,22 +89,24 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
     setExpanded(false);
     setPlaying(false);
   }, []);
-  const send = useCallback((command: "playVideo" | "pauseVideo") => {
-    iframeRef.current?.contentWindow?.postMessage(JSON.stringify({ event: "command", func: command, args: [] }), "*");
-  }, []);
   const toggle = () => {
     const next = !playing;
-    if (spotifyId && spotifyControllerRef.current) {
+    if (ytPlayerRef.current) {
+      if (next) ytPlayerRef.current.playVideo();
+      else ytPlayerRef.current.pauseVideo();
+      setPlaying(next);
+      return;
+    }
+    if (spotifyControllerRef.current) {
       if (next) spotifyControllerRef.current.play();
       else spotifyControllerRef.current.pause();
       setPlaying(next);
       return;
     }
-    send(next ? "playVideo" : "pauseVideo");
     setPlaying(next);
   };
   const close = () => {
-    send("pauseVideo");
+    ytPlayerRef.current?.pauseVideo();
     spotifyControllerRef.current?.pause();
     setEpisode(null);
     setExpanded(false);
@@ -109,6 +125,54 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [expanded, episode]);
+  useEffect(() => {
+    ytPlayerRef.current?.destroy();
+    ytPlayerRef.current = null;
+    if (!id || !ytMountRef.current) return;
+
+    let active = true;
+    const createPlayer = () => {
+      const api = window.YT;
+      const mount = ytMountRef.current;
+      if (!active || !api?.Player || !mount) return;
+      mount.replaceChildren();
+      const host = document.createElement("div");
+      mount.appendChild(host);
+      ytPlayerRef.current = new api.Player(host, {
+        videoId: id,
+        host: "https://www.youtube-nocookie.com",
+        playerVars: { autoplay: 0, playsinline: 1, rel: 0, modestbranding: 1 },
+        events: {
+          onStateChange: (event: { data: number }) => {
+            if (event.data === api.PlayerState.PLAYING) setPlaying(true);
+            if (event.data === api.PlayerState.PAUSED || event.data === api.PlayerState.ENDED) setPlaying(false);
+          },
+        },
+      });
+    };
+
+    if (window.YT?.Player) {
+      createPlayer();
+    } else {
+      const previousReady = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => {
+        previousReady?.();
+        createPlayer();
+      };
+      if (!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
+        const script = document.createElement("script");
+        script.src = "https://www.youtube.com/iframe_api";
+        script.async = true;
+        document.body.appendChild(script);
+      }
+    }
+
+    return () => {
+      active = false;
+      ytPlayerRef.current?.destroy();
+      ytPlayerRef.current = null;
+    };
+  }, [id]);
   useEffect(() => {
     spotifyControllerRef.current?.destroy();
     spotifyControllerRef.current = null;
@@ -174,7 +238,7 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
           <Button variant="ghost" size="icon" className="rounded-full text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground" onClick={close} aria-label="Fechar player"><X/></Button>
         </div>
       </div>
-      {id && <iframe ref={iframeRef} className={expanded ? "podcast-video" : "podcast-video-hidden"} src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=${playing ? 1 : 0}&enablejsapi=1`} title={episode.title} allow="autoplay; encrypted-media"/>}
+      {id && <div className={expanded ? "podcast-video" : "podcast-video-hidden"} aria-label={`Ouvir ${episode.title}`}><div ref={ytMountRef}/></div>}
       {!id && spotifyId && <div className={expanded ? "podcast-spotify" : "podcast-video-hidden"} aria-label={`Ouvir ${episode.title} no Spotify`}><div ref={spotifyMountRef}/></div>}
       {expanded && <div className="relative z-[2] mt-7 flex flex-wrap justify-center gap-2">{links.filter(([, url]) => url).map(([name, url]) => <a key={name} href={url ?? "#"} target="_blank" rel="noreferrer" className="rounded-full border border-primary-foreground/25 px-4 py-2 text-sm hover:bg-primary-foreground/10">{name}</a>)}</div>}
     </div>}
