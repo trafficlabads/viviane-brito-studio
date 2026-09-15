@@ -7,13 +7,21 @@ const sessionConfig = () => ({
   password: process.env['ADMIN_SESSION_SECRET']!,
   name: "viviane-admin",
   maxAge: 60 * 60 * 12,
-  cookie: { httpOnly: true, secure: process.env['NODE_ENV'] === "production", sameSite: "lax" as const, path: "/" },
+  cookie: {
+    httpOnly: true,
+    secure: process.env['NODE_ENV'] === "production",
+    sameSite: (process.env['NODE_ENV'] === "production" ? "none" : "lax") as "none" | "lax",
+    path: "/",
+  },
 });
 type AdminSession = { admin?: boolean };
 const safeEqual = (a: string, b: string) => timingSafeEqual(createHash("sha256").update(a).digest(), createHash("sha256").update(b).digest());
-async function requireAdmin() {
+async function isAdmin() {
   const session = await useSession<AdminSession>(sessionConfig());
   return session.data.admin === true;
+}
+async function requireAdmin() {
+  if (!(await isAdmin())) throw new Error("Acesso não autorizado");
 }
 async function adminClient() { return (await import("@/integrations/supabase/client.server")).supabaseAdmin; }
 
@@ -46,7 +54,7 @@ export const getPublicContent = createServerFn({ method: "GET" }).handler(async 
 });
 
 export const getAdminContent = createServerFn({ method: "GET" }).handler(async () => {
-  if (!(await requireAdmin())) {
+  if (!(await isAdmin())) {
     return { authorized: false as const, categories: [], articles: [], episodes: [], messages: [], testimonials: [], services: [] };
   }
   const db = await adminClient();
