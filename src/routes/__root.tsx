@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { PodcastPlayerProvider } from "@/components/site/PodcastPlayer";
+import { WhatsAppProvider } from "@/components/site/WhatsAppDialog";
 
 function NotFoundComponent() {
   return (
@@ -123,7 +124,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <PodcastPlayerProvider><Outlet /></PodcastPlayerProvider>
+      <PodcastPlayerProvider><WhatsAppProvider><Outlet /></WhatsAppProvider></PodcastPlayerProvider>
     </QueryClientProvider>
   );
 }
