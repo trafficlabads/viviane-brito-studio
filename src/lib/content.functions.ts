@@ -7,7 +7,7 @@ const sessionConfig = () => ({
   password: process.env['ADMIN_SESSION_SECRET']!,
   name: "viviane-admin",
   maxAge: 60 * 60 * 12,
-  cookie: { httpOnly: true, secure: true, sameSite: "lax" as const, path: "/" },
+  cookie: { httpOnly: true, secure: process.env['NODE_ENV'] === "production", sameSite: "lax" as const, path: "/" },
 });
 type AdminSession = { admin?: boolean };
 const safeEqual = (a: string, b: string) => timingSafeEqual(createHash("sha256").update(a).digest(), createHash("sha256").update(b).digest());
