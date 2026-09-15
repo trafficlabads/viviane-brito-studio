@@ -9,8 +9,10 @@ const sessionConfig = () => ({
   maxAge: 60 * 60 * 12,
   cookie: {
     httpOnly: true,
-    secure: process.env['NODE_ENV'] === "production",
-    sameSite: (process.env['NODE_ENV'] === "production" ? "none" : "lax") as "none" | "lax",
+    // The editor preview renders the app inside a cross-origin iframe, so the
+    // session cookie must be SameSite=None + Secure to be sent at all.
+    secure: true,
+    sameSite: "none" as const,
     path: "/",
   },
 });
