@@ -13,7 +13,7 @@ type AdminSession = { admin?: boolean };
 const safeEqual = (a: string, b: string) => timingSafeEqual(createHash("sha256").update(a).digest(), createHash("sha256").update(b).digest());
 async function requireAdmin() {
   const session = await useSession<AdminSession>(sessionConfig());
-  if (!session.data.admin) throw new Error("Acesso não autorizado");
+  return session.data.admin === true;
 }
 async function adminClient() { return (await import("@/integrations/supabase/client.server")).supabaseAdmin; }
 
@@ -46,13 +46,16 @@ export const getPublicContent = createServerFn({ method: "GET" }).handler(async 
 });
 
 export const getAdminContent = createServerFn({ method: "GET" }).handler(async () => {
-  await requireAdmin(); const db = await adminClient();
+  if (!(await requireAdmin())) {
+    return { authorized: false as const, categories: [], articles: [], episodes: [], messages: [], testimonials: [], services: [] };
+  }
+  const db = await adminClient();
   const [{ data: categories }, { data: articles }, { data: episodes }, { data: messages }, { data: testimonials }, { data: services }] = await Promise.all([
     db.from("article_categories").select("*").order("name"), db.from("articles").select("*").order("created_at", { ascending: false }),
     db.from("podcast_episodes").select("*").order("created_at", { ascending: false }), db.from("contact_messages").select("*").order("created_at", { ascending: false }),
     db.from("testimonials").select("*").order("order_index"), db.from("service_pages").select("*").order("order_index"),
   ]);
-  return { categories: categories ?? [], articles: articles ?? [], episodes: episodes ?? [], messages: messages ?? [], testimonials: testimonials ?? [], services: services ?? [] };
+  return { authorized: true as const, categories: categories ?? [], articles: articles ?? [], episodes: episodes ?? [], messages: messages ?? [], testimonials: testimonials ?? [], services: services ?? [] };
 });
 
 const testimonialSchema = z.object({ id: z.string().uuid().optional(), name: z.string().min(2), context: z.string(), quote: z.string(), content: z.string(), cover_url: z.string().nullable(), published: z.boolean(), order_index: z.number() });
