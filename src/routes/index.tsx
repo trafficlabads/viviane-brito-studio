@@ -7,7 +7,7 @@ import { SiteLayout } from "@/components/site/Layout";
 import { Reveal } from "@/components/site/Reveal";
 import { usePodcastPlayer } from "@/components/site/PodcastPlayer";
 import { getPublicContent, sendContact } from "@/lib/content.functions";
-import hero from "@/assets/viviane-hero.jpg";
+import hero from "@/assets/viviane-hero-branded.jpg";
 import portrait from "@/assets/viviane-portrait.jpg";
 import podcastCover from "@/assets/podcast-cover.jpg";
 import articlePath from "@/assets/article-path.jpg";

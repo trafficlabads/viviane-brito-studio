@@ -170,9 +170,19 @@
   --player: oklch(0.24 0.08 310);
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; scroll-padding-top: 6rem; }
 body { margin: 0; font-family: var(--font-sans); letter-spacing: 0; overflow-x: hidden; }
 button, input, textarea, select { font: inherit; }
+a, button { -webkit-tap-highlight-color: transparent; }
+a:not(.podcast-feature), button { transition: color .55s ease, background-color .55s ease, border-color .55s ease, box-shadow .55s ease, transform .55s cubic-bezier(.2,.75,.25,1), opacity .55s ease; }
+@media (hover:hover) {
+  a:hover { opacity: .82; }
+  .interactive-control:hover, main a[class*="rounded-full"]:hover { transform: translateY(-2px); box-shadow: 0 10px 24px color-mix(in oklab, var(--foreground) 14%, transparent); }
+  .menu-monogram:hover { transform: rotate(-5deg) scale(1.07); opacity: 1; }
+  nav a:not(.menu-monogram):hover { transform: translateY(-1px); opacity: 1; }
+  .episode-row:hover { background: var(--secondary); padding-left: .75rem; padding-right: .75rem; }
+  .podcast-feature:hover { transform: translateY(-4px); box-shadow: 0 18px 42px color-mix(in oklab, var(--foreground) 13%, transparent); }
+}
 .font-display { font-family: var(--font-display); letter-spacing: 0; }
 .section { padding: 7rem 1.5rem; }
 .section > * { max-width: 80rem; margin-left: auto; margin-right: auto; }
@@ -186,8 +196,9 @@ button, input, textarea, select { font: inherit; }
 .bg-article-overlay { background: linear-gradient(to top, color-mix(in oklab, var(--primary) 90%, transparent), color-mix(in oklab, var(--primary) 8%, transparent) 72%); }
 .field { width: 100%; border: 1px solid var(--border); border-radius: var(--radius); background: var(--background); padding: .95rem 1rem; color: var(--foreground); outline: none; }
 .field:focus { border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 15%, transparent); }
-.reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s ease, transform .8s cubic-bezier(.2,.75,.25,1); }
+.reveal { opacity: 0; transform: translateY(42px) scale(.99); filter: blur(3px); transition: opacity 1.6s ease, transform 1.8s cubic-bezier(.16,.72,.2,1), filter 1.5s ease; }
 .reveal.is-visible { opacity: 1; transform: none; }
+.reveal.is-visible { filter: none; }
 .story-link { position: relative; }
 .story-link::after { content:""; position:absolute; left:0; right:0; bottom:-4px; height:1px; background:var(--primary); transform:scaleX(0); transform-origin:right; transition:transform .3s; }
 .story-link:hover::after { transform:scaleX(1); transform-origin:left; }
@@ -217,8 +228,14 @@ button, input, textarea, select { font: inherit; }
 .podcast-cover { width:4.25rem; height:4.25rem; border-radius:.9rem; object-fit:cover; }
 .podcast-stage .podcast-cover { width:clamp(9rem,18vw,14rem); height:clamp(9rem,18vw,14rem); border-radius:1.5rem; }
 .podcast-video { position:relative; z-index:2; display:block; width:min(34rem,100%); aspect-ratio:16/9; margin:2rem auto 0; border:0; border-radius:1rem; }
+.podcast-spotify { position:relative; z-index:2; display:block; width:min(38rem,100%); height:352px; margin:2rem auto 0; border:0; border-radius:1rem; }
 .podcast-video-hidden { position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; }
 .footer-name { margin-top:2rem; font-family:var(--font-display); font-size:clamp(4rem,13.5vw,13rem); line-height:.78; text-align:center; white-space:nowrap; }
 @media (min-width: 768px) { .editorial-grid { grid-template-columns: 1.2fr .8fr; } }
 @media (max-width: 640px) { .section { padding:5rem 1.25rem; } .page-hero { padding:9rem 1.25rem 4rem; } .podcast-stage .podcast-player-inner { gap:1.5rem; } }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior:auto; } .reveal { opacity:1; transform:none; transition:none; } .player-orbit,.marquee-track { animation:none; } }
+@supports (animation-timeline: view()) {
+  main > section { animation: section-assemble linear both; animation-timeline: view(); animation-range: entry 0% entry 45%; transform-origin: center top; }
+  main > .marquee { animation: section-assemble linear both; animation-timeline: view(); animation-range: entry 0% entry 60%; }
+}
+@keyframes section-assemble { from { opacity:.38; transform:translateY(54px) scale(.985); filter:blur(4px); } to { opacity:1; transform:none; filter:none; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior:auto; } main > section,main > .marquee { animation:none; } .reveal { opacity:1; transform:none; filter:none; transition:none; } .player-orbit,.marquee-track { animation:none; } }
