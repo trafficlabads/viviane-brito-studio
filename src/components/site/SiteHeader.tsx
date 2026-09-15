@@ -32,7 +32,7 @@ export function SiteHeader() {
   return (
     <header className="fixed inset-x-0 top-5 z-50 px-4">
       <nav className="relative mx-auto grid w-fit max-w-[calc(100vw-2rem)] grid-cols-[auto_auto] items-center rounded-full border border-foreground/15 bg-background/75 p-1 shadow-lg backdrop-blur-xl md:flex">
-        <Link to="/" aria-label="Viviane Brito — início" onClick={() => setOpen(false)} className="menu-monogram grid size-9 shrink-0 place-items-center rounded-full bg-secondary font-display text-sm text-primary">VB</Link>
+        <Link to="/" hash="inicio" aria-label="Viviane Brito — início" onClick={() => setOpen(false)} className="menu-monogram grid size-9 shrink-0 place-items-center rounded-full bg-secondary font-display text-sm text-primary">VB</Link>
         <div className="hidden items-center md:flex">
           <div className="relative">
             <Button variant="ghost" size="sm" className="rounded-full font-normal text-foreground/75" onClick={() => setPagesOpen(!pagesOpen)} aria-expanded={pagesOpen}>Todas as páginas <ChevronDown className={`size-3 transition-transform ${pagesOpen ? "rotate-180" : ""}`}/></Button>
