@@ -89,22 +89,24 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
     setExpanded(false);
     setPlaying(false);
   }, []);
-  const send = useCallback((command: "playVideo" | "pauseVideo") => {
-    iframeRef.current?.contentWindow?.postMessage(JSON.stringify({ event: "command", func: command, args: [] }), "*");
-  }, []);
   const toggle = () => {
     const next = !playing;
-    if (spotifyId && spotifyControllerRef.current) {
+    if (ytPlayerRef.current) {
+      if (next) ytPlayerRef.current.playVideo();
+      else ytPlayerRef.current.pauseVideo();
+      setPlaying(next);
+      return;
+    }
+    if (spotifyControllerRef.current) {
       if (next) spotifyControllerRef.current.play();
       else spotifyControllerRef.current.pause();
       setPlaying(next);
       return;
     }
-    send(next ? "playVideo" : "pauseVideo");
     setPlaying(next);
   };
   const close = () => {
-    send("pauseVideo");
+    ytPlayerRef.current?.pauseVideo();
     spotifyControllerRef.current?.pause();
     setEpisode(null);
     setExpanded(false);
