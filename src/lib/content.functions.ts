@@ -91,3 +91,24 @@ const episodeSchema = z.object({ id: z.string().uuid().optional(), title: z.stri
 export const saveEpisode = createServerFn({ method: "POST" }).inputValidator((d) => episodeSchema.parse(d)).handler(async ({ data }) => { await requireAdmin(); const db = await adminClient(); const { id: _id, ...fields } = data; const payload = { ...fields, slug: slugify(data.title), published_at: data.published ? new Date().toISOString() : null }; const result = data.id ? await db.from("podcast_episodes").update(payload).eq("id", data.id) : await db.from("podcast_episodes").insert(payload); if (result.error) throw new Error(result.error.message); return { ok: true }; });
 export const deleteEpisode = createServerFn({ method: "POST" }).inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d)).handler(async ({ data }) => { await requireAdmin(); const db = await adminClient(); const { error } = await db.from("podcast_episodes").delete().eq("id", data.id); if (error) throw new Error(error.message); return { ok: true }; });
 export const sendContact = createServerFn({ method: "POST" }).inputValidator((d) => z.object({ name: z.string().min(2).max(120), email: z.string().email(), phone: z.string().max(30).optional(), message: z.string().min(10).max(5000) }).parse(d)).handler(async ({ data }) => { const db = await adminClient(); const { error } = await db.from("contact_messages").insert({ ...data, phone: data.phone || null }); if (error) throw new Error(error.message); return { ok: true }; });
+
+export const getLatestEpisode = createServerFn({ method: "GET" }).handler(async () => {
+  const db = await adminClient();
+  const { data } = await db.from("podcast_episodes").select("*").eq("published", true).order("published_at", { ascending: false }).limit(1);
+  return data?.[0] ?? null;
+});
+
+export const uploadMedia = createServerFn({ method: "POST" })
+  .inputValidator((d) => z.object({ filename: z.string().min(1), dataUrl: z.string().min(10) }).parse(d))
+  .handler(async ({ data }) => {
+    await requireAdmin();
+    const db = await adminClient();
+    const [meta, base64] = data.dataUrl.split(",");
+    const contentType = meta?.match(/data:([^;]+)/)?.[1] ?? "image/jpeg";
+    const bytes = Uint8Array.from(atob(base64 ?? ""), (c) => c.charCodeAt(0));
+    const ext = (data.filename.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
+    const path = `uploads/${Date.now()}-${slugify(data.filename.replace(/\.[^.]+$/, "")) || "imagem"}.${ext}`;
+    const { error } = await db.storage.from("content-media").upload(path, bytes, { contentType, upsert: true });
+    if (error) throw new Error(error.message);
+    return { url: db.storage.from("content-media").getPublicUrl(path).data.publicUrl };
+  });
