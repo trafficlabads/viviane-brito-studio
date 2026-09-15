@@ -1,12 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
-import { ArrowDown, ArrowUpRight, Building2, HeartHandshake, Leaf, Play, Send, type LucideIcon } from "lucide-react";
-import { useState } from "react";
+import { ArrowDown, ArrowUpRight, Building2, HeartHandshake, Leaf, MessageCircle, Play, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SiteLayout } from "@/components/site/Layout";
 import { Reveal } from "@/components/site/Reveal";
 import { usePodcastPlayer } from "@/components/site/PodcastPlayer";
-import { getPublicContent, sendContact } from "@/lib/content.functions";
+import { useWhatsApp } from "@/components/site/WhatsAppDialog";
+import { getPublicContent } from "@/lib/content.functions";
 import heroAsset from "@/assets/hero-field.png.asset.json";
 const hero = heroAsset.url;
 import portrait from "@/assets/viviane-portrait.jpg";
@@ -26,7 +25,7 @@ export const Route = createFileRoute("/")({
   loader: () => getPublicContent(),
   head: () => ({ meta: [{ title: "Viviane Brito — Psicologia e Desenvolvimento" },{ name:"description", content:"Psicologia, carreira e desenvolvimento humano com Viviane Brito."},{ property:"og:title", content:"Viviane Brito — Psicologia e Desenvolvimento"},{ property:"og:description", content:"Compreender a história. Ampliar o olhar. Construir novos caminhos."},{ property:"og:type", content:"website"},{ name:"twitter:card", content:"summary_large_image" }] }), component: Home,
 });
-function Home() { const data = Route.useLoaderData(); const send = useServerFn(sendContact); const [sent,setSent]=useState(false); const {playEpisode}=usePodcastPlayer(); const featured=data.episodes[0];
+function Home() { const data = Route.useLoaderData(); const { openWhatsApp } = useWhatsApp(); const {playEpisode}=usePodcastPlayer(); const featured=data.episodes[0];
 const articleImages=[articlePath,articleCareer,articleConnection]; const articleFallback=["Toda mudança começa quando escutamos o que a nossa história quer dizer.","Escolher um novo caminho também é uma forma de voltar para si.","Há encontros que ampliam o olhar e transformam possibilidades."];
  return <SiteLayout><section className="home-hero relative overflow-hidden bg-primary text-primary-foreground"><img src={hero} alt="Mulher contemplando uma paisagem aberta" width={1536} height={1024} className="absolute inset-0 h-full w-full object-cover saturate-[.7]"/><div className="absolute inset-0 bg-hero-overlay"/><div className="relative mx-auto flex min-h-[100svh] max-w-7xl flex-col justify-end px-6 pb-10 pt-32"><p className="hero-pill mb-5">✦ Psicologia e desenvolvimento humano</p><h1 className="max-w-4xl font-display text-[clamp(3.25rem,6.4vw,6.9rem)] leading-[.96]">Toda pessoa carrega uma história que merece ser compreendida.</h1><p className="mt-7 max-w-lg text-sm leading-6 text-primary-foreground/80">Compreender a história. Ampliar o olhar. Construir novos caminhos. Há mais de 20 anos acompanhando pessoas, grupos e organizações.</p><div className="mt-7 flex flex-wrap gap-3"><a href="#caminhos"><Button variant="secondary" className="rounded-full">Conheça os caminhos</Button></a><a href="#contato"><Button variant="ghost" className="rounded-full text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">Vamos conversar</Button></a></div><ArrowDown className="mt-8 h-5 w-5 animate-bounce"/></div></section>
  <div className="marquee" aria-label="Áreas de atuação"><div className="marquee-track">{["Psicoterapia","Desenvolvimento de carreira","Orientação vocacional","Grupos terapêuticos","Desenvolvimento humano","Psicoterapia","Desenvolvimento de carreira","Orientação vocacional"].map((item,i)=><span key={`${item}-${i}`}>✦ {item}</span>)}</div></div>
