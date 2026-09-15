@@ -57,7 +57,6 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
   const toggle = () => {
     const next = !playing;
     setPlaying(next);
-    if (next) setExpanded(true);
     send(next ? "playVideo" : "pauseVideo");
   };
   const close = () => { send("pauseVideo"); setEpisode(null); setExpanded(false); setPlaying(false); };
