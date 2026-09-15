@@ -15,6 +15,13 @@
       "when": 1789429361353,
       "tag": "0001_content_media_policies",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789433502390,
+      "tag": "0002_create_testimonials_and_service_pages",
+      "breakpoints": true
     }
   ]
 }
