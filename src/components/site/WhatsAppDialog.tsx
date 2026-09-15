@@ -59,7 +59,7 @@ export function WhatsAppProvider({ children }: { children: ReactNode }) {
               <input name="nome" required maxLength={100} placeholder="Seu nome" autoComplete="name" className="field" />
               <textarea name="ajuda" required minLength={5} maxLength={500} rows={4} placeholder="Como posso ajudar?" className="field resize-none" />
               <Button type="submit" size="lg" className="mt-1 justify-between rounded-full">
-                Chamar no WhatsApp <Send className="size-4" />
+                Vamos Conversar <Send className="size-4" />
               </Button>
             </form>
           </div>

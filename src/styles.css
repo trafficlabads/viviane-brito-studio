@@ -207,11 +207,12 @@ a:not(.podcast-feature), button { transition: color .55s ease, background-color 
 .assemble > *:nth-child(4) { transition-delay: .66s; }
 .assemble > *:nth-child(5) { transition-delay: .88s; }
 .assemble > *:nth-child(6) { transition-delay: 1.1s; }
-.testimonial-card { transition: transform 700ms cubic-bezier(.16,.72,.2,1), box-shadow 700ms ease; }
-.testimonial-card img { transition: transform 1.2s cubic-bezier(.16,.72,.2,1), filter 700ms ease; }
+.testimonial-card { transition: box-shadow 700ms ease, opacity 550ms ease; }
+.media-card { isolation: isolate; }
+.media-card-image { transform: translateZ(0) scale(1.001); backface-visibility: hidden; will-change: transform; transition: transform 1.2s cubic-bezier(.16,.72,.2,1), filter 700ms ease; }
 @media (hover: hover) {
-  .testimonial-card:hover { transform: translateY(-8px); box-shadow: 0 30px 60px -30px color-mix(in oklab, var(--primary) 55%, transparent); }
-  .testimonial-card:hover img { transform: scale(1.06); filter: saturate(1.05); }
+  .testimonial-card:hover { opacity: 1; box-shadow: 0 30px 60px -30px color-mix(in oklab, var(--primary) 55%, transparent); }
+  .media-card:hover .media-card-image { transform: translateZ(0) scale(1.065); filter: saturate(1.05); }
   .testimonial-card:hover .testimonial-more { opacity: 1; transform: none; }
 }
 .testimonial-more { opacity: 0; transform: translateY(10px); transition: opacity 600ms ease, transform 700ms ease; }
