@@ -1,9 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/site/Layout";
 import { Reveal } from "@/components/site/Reveal";
-import portraitAsset from "@/assets/viviane-portrait.png.asset.json";
-
-const portrait = portraitAsset.url;
+import portrait from "@/assets/viviane-hero.jpg";
 
 export const Route = createFileRoute("/about")({
   head: () => ({

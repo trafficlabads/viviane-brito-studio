@@ -49,7 +49,7 @@ Sem CLI: colar SQL no SQL Editor na ordem dos arquivos.
 
 ## Projeto Viviane (referência atual)
 
-- **GitHub (cliente):** https://github.com/trafficlabads/viviane-brito-studio — `main` em `6d9b0c9` (push concluído).
+- **GitHub (cliente):** https://github.com/trafficlabads/viviane-brito-studio — `main` em `2a415a6` (push concluído).
 - **Site (production — Traffic Lab):** https://viviane-brito-studio-olive.vercel.app — Supabase `ugpmsthyjzuvlofratdo`.
 - **Site (provisório — conta Richard):** https://viviane-brito-studio.vercel.app — pode desativar ou manter só para preview do dev.
 - **Supabase (Traffic Lab):** ref **`ugpmsthyjzuvlofratdo`** · URL `https://ugpmsthyjzuvlofratdo.supabase.co`
