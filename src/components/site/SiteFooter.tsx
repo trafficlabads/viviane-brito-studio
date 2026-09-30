@@ -33,11 +33,8 @@ export function SiteFooter() {
           </a>
         </div>
       </div>
-      <div className="mx-auto mt-16 flex max-w-7xl flex-col gap-4 border-t border-secondary-foreground/15 pt-8 sm:flex-row sm:items-end sm:justify-between">
-        <div className="flex flex-col items-start gap-3">
-          <img src={logo} alt="" aria-hidden className="h-auto w-full max-w-[140px] object-contain" />
-          <span className="text-xs opacity-60">Psicologia e desenvolvimento</span>
-        </div>
+      <div className="mx-auto mt-16 flex max-w-7xl flex-col gap-4 border-t border-secondary-foreground/15 pt-8 sm:flex-row sm:items-center sm:justify-between">
+        <span className="text-xs opacity-60">Psicologia e desenvolvimento</span>
         <div className="flex flex-wrap items-center gap-4 text-xs opacity-60">
           <span>© 2026 Viviane Brito</span>
           <Link to="/admin" className="rounded px-2 py-1 opacity-40 hover:bg-secondary-foreground/10 hover:opacity-100">
