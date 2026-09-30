@@ -107,8 +107,14 @@ export const sendContact = createServerFn({ method: "POST" }).inputValidator((d)
 
 export const getLatestEpisode = createServerFn({ method: "GET" }).handler(async () => {
   const db = await adminClient();
-  const { data } = await db.from("podcast_episodes").select("*").eq("published", true).order("published_at", { ascending: false }).limit(1);
-  return data?.[0] ?? null;
+  const { data } = await db
+    .from("podcast_episodes")
+    .select("*")
+    .eq("published", true)
+    .order("published_at", { ascending: false })
+    .limit(20);
+  const playable = (data ?? []).find((ep) => ep.youtube_url?.trim() || ep.spotify_url?.trim());
+  return playable ?? data?.[0] ?? null;
 });
 
 export const uploadMedia = createServerFn({ method: "POST" })

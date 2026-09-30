@@ -92,7 +92,14 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
     setExpanded(false);
     setPlaying(false);
   }, []);
+  const id = youtubeId(episode?.youtube_url);
+  const spotifyId = spotifyEpisodeId(episode?.spotify_url);
+  const playable = Boolean(id || spotifyId);
   const toggle = () => {
+    if (!playable) {
+      setExpanded(true);
+      return;
+    }
     const next = !playing;
     if (ytPlayerRef.current) {
       if (next) ytPlayerRef.current.playVideo();
@@ -115,8 +122,6 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
     setExpanded(false);
     setPlaying(false);
   };
-  const id = youtubeId(episode?.youtube_url);
-  const spotifyId = spotifyEpisodeId(episode?.spotify_url);
   const links = useMemo(() => episode ? [
     ["Spotify", episode.spotify_url], ["SoundCloud", episode.soundcloud_url],
     ["YouTube Music", episode.youtube_music_url], ["Amazon Music", episode.amazon_music_url],
@@ -234,6 +239,12 @@ export function PodcastPlayerProvider({ children }: { children: ReactNode }) {
           {expanded && <p className="eyebrow mb-3 opacity-60">Alma e Caminhos</p>}
           <p className={expanded ? "font-display text-4xl md:text-6xl" : "truncate text-sm font-medium"}>{episode.title}</p>
           {expanded && <p className="mx-auto mt-4 max-w-xl leading-7 opacity-70">{episode.description}</p>}
+          {expanded && !playable && (
+            <p className="mt-4 max-w-md text-sm leading-6 text-amber-100/90">
+              Este episódio ainda não tem link de áudio. No painel <strong>/admin</strong> → Podcasts, preencha o campo{" "}
+              <strong>YouTube</strong> (ou Spotify) e salve.
+            </p>
+          )}
         </div>
         <div className="flex shrink-0 items-center gap-1">
           <Button variant="secondary" size="icon" className="rounded-full" onClick={toggle} aria-label={playing ? "Pausar" : "Reproduzir"}>{playing ? <Pause/> : <Play/>}</Button>

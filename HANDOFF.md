@@ -32,8 +32,12 @@ Checklist para migrar **GitHub + Supabase + Vercel** quando o cliente for leigo 
 | `SUPABASE_SERVICE_ROLE_KEY` | **secret** — só servidor |
 | `VITE_SUPABASE_URL` | igual `SUPABASE_URL` |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | igual publishable |
-| `ADMIN_PASSWORD` | definir com cliente |
+| `ADMIN_PASSWORD` | senha do `/admin` (ex.: `1234` — usuário **admin**) |
 | `ADMIN_SESSION_SECRET` | 32+ bytes aleatórios |
+
+**Admin:** https://…/admin · login `admin` · senha = valor de `ADMIN_PASSWORD` na Vercel (altere em Environment Variables se o login falhar).
+
+**Podcast:** cada episódio precisa de **YouTube** ou **Spotify** no painel; sem link o player abre aviso e não reproduz.
 
 Build: `npm run build` (Nitro preset Vercel).
 

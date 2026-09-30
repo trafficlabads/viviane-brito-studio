@@ -1,3 +1,51 @@
 import { Link } from "@tanstack/react-router";
-import logo from "@/assets/viviane-logo.png";
-export function SiteFooter() { return <footer className="overflow-hidden bg-secondary px-6 pb-4 pt-16 text-secondary-foreground"><div className="mx-auto grid max-w-7xl gap-12 md:grid-cols-[1.5fr_1fr_1fr]"><div><img src={logo} alt="Viviane Brito" width={736} height={442} className="mb-5 h-auto w-full max-w-[220px]"/><p className="max-w-sm text-sm leading-6 opacity-70">Psicologia, desenvolvimento humano, carreira e caminhos construídos com presença.</p></div><div><p className="mb-4 text-sm font-semibold">Páginas</p><div className="grid gap-2 text-sm opacity-70"><Link to="/">Início</Link><Link to="/about">Sobre</Link><Link to="/articles">Artigos</Link><Link to="/podcasts">Podcast</Link></div></div><div><p className="mb-4 text-sm font-semibold">Contato</p><p className="text-sm opacity-70">CRP: a preencher</p><a href="https://wa.me/5511933441809" target="_blank" rel="noopener noreferrer" className="mt-2 block text-sm opacity-70 hover:opacity-100">+55 11 93344-1809</a></div></div><div className="mx-auto mt-16 flex max-w-7xl items-center justify-between border-t border-secondary-foreground/15 pt-5 text-xs opacity-60"><span>© 2026 Viviane Brito</span><div className="flex items-center gap-4"><span>Psicologia e Desenvolvimento</span><Link to="/admin" className="rounded px-2 py-1 opacity-40 hover:opacity-100 hover:bg-secondary-foreground/10 transition-opacity">ADM</Link></div></div><div className="mx-auto mt-12 flex justify-center px-6 pb-6"><img src={logo} alt="" aria-hidden width={736} height={442} className="h-auto w-full max-w-[min(736px,90vw)] opacity-95"/></div></footer> }
+import logo from "@/assets/viviane-logo-purple.png";
+import mark from "@/assets/viviane-mark.png";
+
+export function SiteFooter() {
+  return (
+    <footer className="overflow-hidden bg-secondary px-6 pb-4 pt-16 text-secondary-foreground">
+      <div className="mx-auto grid max-w-7xl gap-12 md:grid-cols-[1.5fr_1fr_1fr]">
+        <div>
+          <img src={logo} alt="Viviane Brito" width={736} height={442} className="mb-5 h-auto w-full max-w-[200px]" />
+          <p className="max-w-sm text-sm leading-6 opacity-70">
+            Psicologia, desenvolvimento humano, carreira e caminhos construídos com presença.
+          </p>
+        </div>
+        <div>
+          <p className="mb-4 text-sm font-semibold">Páginas</p>
+          <div className="grid gap-2 text-sm opacity-70">
+            <Link to="/">Início</Link>
+            <Link to="/about">Sobre</Link>
+            <Link to="/articles">Artigos</Link>
+            <Link to="/podcasts">Podcast</Link>
+          </div>
+        </div>
+        <div>
+          <p className="mb-4 text-sm font-semibold">Contato</p>
+          <p className="text-sm opacity-70">CRP: a preencher</p>
+          <a
+            href="https://wa.me/5511933441809"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2 block text-sm opacity-70 hover:opacity-100"
+          >
+            +55 11 93344-1809
+          </a>
+        </div>
+      </div>
+      <div className="mx-auto mt-16 flex max-w-7xl flex-col gap-4 border-t border-secondary-foreground/15 pt-8 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col items-start gap-3">
+          <img src={mark} alt="" aria-hidden className="h-14 w-14 object-contain" />
+          <span className="text-xs opacity-60">Psicologia e Desenvolvimento</span>
+        </div>
+        <div className="flex flex-wrap items-center gap-4 text-xs opacity-60">
+          <span>© 2026 Viviane Brito</span>
+          <Link to="/admin" className="rounded px-2 py-1 opacity-40 hover:bg-secondary-foreground/10 hover:opacity-100">
+            ADM
+          </Link>
+        </div>
+      </div>
+    </footer>
+  );
+}
