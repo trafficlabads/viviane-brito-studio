@@ -49,12 +49,10 @@ Sem CLI: colar SQL no SQL Editor na ordem dos arquivos.
 
 ## Projeto Viviane (referência atual)
 
-- **Site (production):** https://viviane-brito-studio.vercel.app — Supabase Traffic Lab; Vercel na conta Richard até transferência GitHub + import no time **TrafficLab**.
+- **GitHub (cliente):** https://github.com/trafficlabads/viviane-brito-studio — `main` em `6d9b0c9` (push concluído).
+- **Site (production — Traffic Lab):** https://viviane-brito-studio-olive.vercel.app — Supabase `ugpmsthyjzuvlofratdo`.
+- **Site (provisório — conta Richard):** https://viviane-brito-studio.vercel.app — pode desativar ou manter só para preview do dev.
 - **Supabase (Traffic Lab):** ref **`ugpmsthyjzuvlofratdo`** · URL `https://ugpmsthyjzuvlofratdo.supabase.co`
 - Rodar migrations em `supabase/migrations/` (ordem pelo nome) no SQL Editor ou `supabase link` + `supabase db push`.
-- **Vercel (Traffic Lab):** conta `trafficlabads@gmail.com` — importar o repo, mesmas env vars (tabela acima), deploy production. Não usar conta pessoal do dev para production do cliente.
-- **GitHub (se Vercel do cliente não enxergar `Richard-Duarte/...`):** transferir o repo para o usuário **`trafficlabads`** no GitHub (Richard aceita como collaborator depois). Time Vercel **Hobby** não permite convidar membros — por isso import cross-account falha sem transferência ou repo na mesma conta GitHub da Vercel.
-- **Provisório:** deploy em `https://viviane-brito-studio.vercel.app` (conta Richard) com Supabase Traffic Lab até concluir transfer + import no time **TrafficLab**.
-- **GitHub (se Vercel do cliente não enxergar `Richard-Duarte/...`):** transferir o repo para o usuário **`trafficlabads`** no GitHub (Richard aceita como collaborator depois). Time Vercel **Hobby** não permite convidar membros — por isso import cross-account falha sem transferência ou repo na mesma conta GitHub da Vercel.
-- **Provisório:** deploy em `https://viviane-brito-studio.vercel.app` (conta Richard) com Supabase Traffic Lab até concluir transfer + import no time **TrafficLab**.
+- **Vercel (Traffic Lab):** projeto [viviane-brito-studio](https://vercel.com/traffic-lab/viviane-brito-studio) · conta `trafficlabads@gmail.com` · Git `trafficlabads/viviane-brito-studio`.
 - Lovable (se usar): mesmas env vars com URL e chaves deste Supabase.
