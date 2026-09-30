@@ -231,6 +231,9 @@ a:not(.podcast-feature), button { transition: color .55s ease, background-color 
 @keyframes drift { to { transform:translate(5vw,4vw) rotate(12deg) scale(1.08); } }
 .home-hero { min-height: 100svh; border-radius: 0 0 2.25rem 2.25rem; }
 .hero-pill { width:fit-content; border-radius:999px; background:color-mix(in oklab,var(--foreground) 35%,transparent); padding:.45rem .7rem; font-size:.72rem; }
+.hero-brand-logo { width:100%; max-width:min(420px,88vw); height:auto; }
+@media (min-width:768px) { .hero-brand-logo { max-width:min(480px,42rem); } }
+.hero-title-rule { margin-top:1.5rem; padding-top:1.75rem; border-top:1px solid color-mix(in oklab,var(--primary-foreground) 90%,transparent); }
 .marquee { overflow:hidden; border-bottom:1px solid var(--border); background:var(--secondary); padding:1.15rem 0; }
 .marquee-track { display:flex; width:max-content; gap:3rem; animation:marquee 26s linear infinite; white-space:nowrap; }
 .marquee-track span { font-size:.85rem; }

@@ -35,7 +35,16 @@ Checklist para migrar **GitHub + Supabase + Vercel** quando o cliente for leigo 
 | `ADMIN_PASSWORD` | senha do `/admin` (ex.: `1234` — usuário **admin**) |
 | `ADMIN_SESSION_SECRET` | 32+ bytes aleatórios |
 
-**Admin:** https://…/admin · login `admin` · senha = valor de `ADMIN_PASSWORD` na Vercel (altere em Environment Variables se o login falhar).
+**Admin:** `/admin` · usuário **`admin`** · senha = **`ADMIN_PASSWORD`** no deploy que você está abrindo.
+
+Se **`1234` der inválido**, a Vercel ainda está com outra senha (ex. `viviane-preview-2026`):
+
+1. Login **trafficlabads@gmail.com** → [viviane-brito-studio](https://vercel.com/traffic-lab/viviane-brito-studio) → **Settings → Environment Variables**
+2. Edite **`ADMIN_PASSWORD`** → valor `1234` (sem aspas) em **Production** e **Preview**
+3. Confirme **`ADMIN_SESSION_SECRET`** (32+ caracteres)
+4. **Deployments → Redeploy** o último production
+
+Site cliente: https://viviane-brito-studio-olive.vercel.app · site Richard (outro env): https://viviane-brito-studio.vercel.app
 
 **Podcast:** cada episódio precisa de **YouTube** ou **Spotify** no painel; sem link o player abre aviso e não reproduz.
 

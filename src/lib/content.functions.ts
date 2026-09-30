@@ -18,6 +18,14 @@ const sessionConfig = () => ({
 });
 type AdminSession = { admin?: boolean };
 const safeEqual = (a: string, b: string) => timingSafeEqual(createHash("sha256").update(a).digest(), createHash("sha256").update(b).digest());
+const normalizeEnvSecret = (raw?: string) => {
+  if (!raw) return undefined;
+  let value = raw.trim();
+  if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+    value = value.slice(1, -1);
+  }
+  return value;
+};
 async function isAdmin() {
   const session = await useSession<AdminSession>(sessionConfig());
   return session.data.admin === true;
@@ -30,8 +38,12 @@ async function adminClient() { return (await import("@/integrations/supabase/cli
 export const loginAdmin = createServerFn({ method: "POST" })
   .inputValidator((data) => z.object({ username: z.string(), password: z.string() }).parse(data))
   .handler(async ({ data }) => {
-    const expected = process.env['ADMIN_PASSWORD'];
-    if (!expected || data.username !== "admin" || !safeEqual(data.password, expected)) return { ok: false as const };
+    const expected = normalizeEnvSecret(process.env["ADMIN_PASSWORD"]);
+    const sessionSecret = normalizeEnvSecret(process.env["ADMIN_SESSION_SECRET"]);
+    if (!expected || !sessionSecret) return { ok: false as const, error: "config" as const };
+    if (data.username !== "admin" || !safeEqual(data.password.trim(), expected)) {
+      return { ok: false as const, error: "credentials" as const };
+    }
     const session = await useSession<AdminSession>(sessionConfig());
     await session.update({ admin: true });
     return { ok: true as const };

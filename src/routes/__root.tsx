@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { LenisScrollProvider } from "@/components/site/LenisScroll";
 import { PodcastPlayerProvider } from "@/components/site/PodcastPlayer";
 import { WhatsAppProvider } from "@/components/site/WhatsAppDialog";
 
@@ -124,7 +125,13 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <PodcastPlayerProvider><WhatsAppProvider><Outlet /></WhatsAppProvider></PodcastPlayerProvider>
+      <LenisScrollProvider>
+        <PodcastPlayerProvider>
+          <WhatsAppProvider>
+            <Outlet />
+          </WhatsAppProvider>
+        </PodcastPlayerProvider>
+      </LenisScrollProvider>
     </QueryClientProvider>
   );
 }
