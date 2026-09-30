@@ -1,0 +1,4 @@
+CREATE POLICY "Public can view content media" ON storage.objects FOR SELECT TO anon, authenticated USING (bucket_id = 'content-media');
+CREATE POLICY "Authenticated users can add content media" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'content-media');
+CREATE POLICY "Authenticated users can update content media" ON storage.objects FOR UPDATE TO authenticated USING (bucket_id = 'content-media') WITH CHECK (bucket_id = 'content-media');
+CREATE POLICY "Authenticated users can delete content media" ON storage.objects FOR DELETE TO authenticated USING (bucket_id = 'content-media');
