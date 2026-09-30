@@ -1,14 +1,12 @@
-import { Link, useNavigate, useRouter } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useWhatsApp } from "@/components/site/WhatsAppDialog";
-import mark from "@/assets/viviane-mark.png";
+import logo from "@/assets/viviane-logo-purple.png";
 
 export function SiteHeader() {
   const { openWhatsApp } = useWhatsApp();
-  const router = useRouter();
-  const navigate = useNavigate({ from: "/" });
   const [open, setOpen] = useState(false);
   const [pagesOpen, setPagesOpen] = useState(false);
 
@@ -18,17 +16,6 @@ export function SiteHeader() {
       document.body.style.overflow = "";
     };
   }, [open]);
-
-  const goHome = () => {
-    setOpen(false);
-    if (router.state.location.pathname === "/") {
-      const el = document.getElementById("inicio");
-      if (el) el.scrollIntoView({ behavior: "smooth" });
-      else window.scrollTo({ top: 0, behavior: "smooth" });
-    } else {
-      navigate({ to: "/", hash: "inicio" });
-    }
-  };
 
   const mobileItems = [
     { to: "/", label: "Início" },
@@ -40,16 +27,8 @@ export function SiteHeader() {
   ] as const;
 
   return (
-    <header className="fixed left-4 top-4 z-50 md:left-6 md:top-5">
-      <nav className="relative flex w-fit max-w-[calc(100vw-2rem)] items-center gap-1 rounded-full border border-foreground/15 bg-background/75 p-1 shadow-lg backdrop-blur-xl">
-        <button
-          type="button"
-          aria-label="Viviane Brito — início"
-          onClick={goHome}
-          className="menu-monogram grid size-9 shrink-0 place-items-center rounded-full bg-secondary font-display text-sm text-primary"
-        >
-          VB
-        </button>
+    <header className="fixed right-4 top-4 z-50 md:right-6 md:top-5">
+      <nav className="relative ml-auto flex w-fit max-w-[calc(100vw-2rem)] items-center gap-1 rounded-full border border-foreground/15 bg-background/75 p-1 shadow-lg backdrop-blur-xl">
         <div className="hidden items-center md:flex">
           <div className="relative">
             <Button
@@ -63,7 +42,7 @@ export function SiteHeader() {
               <ChevronDown className={`size-3 transition-transform ${pagesOpen ? "rotate-180" : ""}`} />
             </Button>
             {pagesOpen && (
-              <div className="absolute left-0 top-11 grid min-w-56 gap-1 rounded-2xl border bg-background p-2 shadow-xl">
+              <div className="absolute right-0 top-11 grid min-w-56 gap-1 rounded-2xl border bg-background p-2 shadow-xl">
                 <Link to="/" onClick={() => setPagesOpen(false)} className="rounded-xl px-4 py-3 text-sm hover:bg-secondary">
                   Início
                 </Link>
@@ -161,7 +140,7 @@ export function SiteHeader() {
           className="mobile-menu-item mt-14 flex flex-col items-start gap-3"
           style={{ transitionDelay: open ? "680ms" : "0ms" }}
         >
-          <img src={mark} alt="" aria-hidden className="h-12 w-12 object-contain" />
+          <img src={logo} alt="Viviane Brito" className="h-auto w-full max-w-[160px] object-contain" />
           <p className="text-xs uppercase tracking-[0.3em] text-foreground/50">Psicologia e desenvolvimento</p>
         </div>
       </div>

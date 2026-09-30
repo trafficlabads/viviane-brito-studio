@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 import logo from "@/assets/viviane-logo-purple.png";
-import mark from "@/assets/viviane-mark.png";
 
 export function SiteFooter() {
   return (
@@ -36,8 +35,8 @@ export function SiteFooter() {
       </div>
       <div className="mx-auto mt-16 flex max-w-7xl flex-col gap-4 border-t border-secondary-foreground/15 pt-8 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex flex-col items-start gap-3">
-          <img src={mark} alt="" aria-hidden className="h-14 w-14 object-contain" />
-          <span className="text-xs opacity-60">Psicologia e Desenvolvimento</span>
+          <img src={logo} alt="" aria-hidden className="h-auto w-full max-w-[140px] object-contain" />
+          <span className="text-xs opacity-60">Psicologia e desenvolvimento</span>
         </div>
         <div className="flex flex-wrap items-center gap-4 text-xs opacity-60">
           <span>© 2026 Viviane Brito</span>
