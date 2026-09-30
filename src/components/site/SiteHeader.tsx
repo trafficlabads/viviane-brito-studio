@@ -3,6 +3,7 @@ import { ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useWhatsApp } from "@/components/site/WhatsAppDialog";
+import logo from "@/assets/viviane-logo.png";
 
 export function SiteHeader() {
   const { openWhatsApp } = useWhatsApp();
@@ -34,7 +35,7 @@ export function SiteHeader() {
   return (
     <header className="fixed inset-x-0 top-5 z-50 px-4">
       <nav className="relative mx-auto grid w-fit max-w-[calc(100vw-2rem)] grid-cols-[auto_auto] items-center rounded-full border border-foreground/15 bg-background/75 p-1 shadow-lg backdrop-blur-xl md:flex">
-        <button type="button" aria-label="Viviane Brito — início" onClick={() => { setOpen(false); if (router.state.location.pathname === "/") { const el = document.getElementById("inicio"); if (el) el.scrollIntoView({ behavior: "smooth" }); else window.scrollTo({ top: 0, behavior: "smooth" }); } else { navigate({ to: "/", hash: "inicio" }); } }} className="menu-monogram grid size-9 shrink-0 place-items-center rounded-full bg-secondary font-display text-sm text-primary">VB</button>
+        <button type="button" aria-label="Viviane Brito — início" onClick={() => { setOpen(false); if (router.state.location.pathname === "/") { const el = document.getElementById("inicio"); if (el) el.scrollIntoView({ behavior: "smooth" }); else window.scrollTo({ top: 0, behavior: "smooth" }); } else { navigate({ to: "/", hash: "inicio" }); } }} className="menu-monogram flex h-9 shrink-0 items-center rounded-full bg-secondary px-2.5"><img src={logo} alt="" className="h-7 w-auto max-w-[5.5rem] object-contain object-left" /></button>
         <div className="hidden items-center md:flex">
           <div className="relative">
             <Button variant="ghost" size="sm" className="rounded-full font-normal text-foreground/75" onClick={() => setPagesOpen(!pagesOpen)} aria-expanded={pagesOpen}>Todas as páginas <ChevronDown className={`size-3 transition-transform ${pagesOpen ? "rotate-180" : ""}`}/></Button>

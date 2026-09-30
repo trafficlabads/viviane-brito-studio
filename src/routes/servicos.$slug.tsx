@@ -5,7 +5,7 @@ import { SiteLayout } from "@/components/site/Layout";
 import { Reveal } from "@/components/site/Reveal";
 import { useWhatsApp } from "@/components/site/WhatsAppDialog";
 import { getPublicContent } from "@/lib/content.functions";
-import portrait from "@/assets/viviane-hero.jpg";
+import portrait from "@/assets/viviane-portrait.jpg";
 
 export const Route = createFileRoute("/servicos/$slug")({
   loader: async ({ params }) => {

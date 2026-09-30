@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/site/Layout";
 import { Reveal } from "@/components/site/Reveal";
-import portrait from "@/assets/viviane-hero.jpg";
+import portrait from "@/assets/viviane-portrait.jpg";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -29,7 +29,7 @@ function About() {
           <Reveal>
             <img
               src={portrait}
-              alt="Retrato editorial representando Viviane Brito"
+              alt="Viviane Brito, psicóloga"
               width={1280}
               height={1600}
               className="aspect-[4/5] w-full rounded-lg object-cover"
