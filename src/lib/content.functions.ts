@@ -3,8 +3,17 @@ import { useSession } from "@tanstack/react-start/server";
 import { createHash, timingSafeEqual } from "node:crypto";
 import { z } from "zod";
 
+const normalizeEnvSecret = (raw?: string) => {
+  if (!raw) return undefined;
+  let value = raw.trim();
+  if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+    value = value.slice(1, -1);
+  }
+  return value;
+};
+
 const sessionConfig = () => ({
-  password: process.env['ADMIN_SESSION_SECRET']!,
+  password: normalizeEnvSecret(process.env["ADMIN_SESSION_SECRET"]) ?? "",
   name: "viviane-admin",
   maxAge: 60 * 60 * 12,
   cookie: {
@@ -18,14 +27,6 @@ const sessionConfig = () => ({
 });
 type AdminSession = { admin?: boolean };
 const safeEqual = (a: string, b: string) => timingSafeEqual(createHash("sha256").update(a).digest(), createHash("sha256").update(b).digest());
-const normalizeEnvSecret = (raw?: string) => {
-  if (!raw) return undefined;
-  let value = raw.trim();
-  if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
-    value = value.slice(1, -1);
-  }
-  return value;
-};
 async function isAdmin() {
   const session = await useSession<AdminSession>(sessionConfig());
   return session.data.admin === true;
