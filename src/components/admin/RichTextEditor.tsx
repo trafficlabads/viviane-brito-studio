@@ -19,20 +19,37 @@ export function useMediaUpload() {
 }
 
 /** Campo de imagem de capa: envio de arquivo + endereço manual. */
-export function CoverField({ name, defaultValue, label = "Imagem de capa" }: { name: string; defaultValue?: string | null; label?: string }) {
+export function CoverField({
+  name,
+  defaultValue,
+  label = "Imagem de capa",
+  value: controlledValue,
+  onValueChange,
+}: {
+  name: string;
+  defaultValue?: string | null;
+  label?: string;
+  value?: string;
+  onValueChange?: (url: string) => void;
+}) {
   const uploadFile = useMediaUpload();
-  const [url, setUrl] = useState(defaultValue ?? "");
+  const [url, setUrlState] = useState(defaultValue ?? "");
+  const urlValue = controlledValue !== undefined ? controlledValue : url;
+  const setUrl = (next: string) => {
+    if (controlledValue === undefined) setUrlState(next);
+    onValueChange?.(next);
+  };
   const [busy, setBusy] = useState(false);
   const input = useRef<HTMLInputElement>(null);
   return (
     <div className="grid gap-2 rounded-lg border border-border p-4">
       <p className="text-sm font-medium">{label}</p>
       <div className="flex flex-wrap items-center gap-3">
-        {url && <img src={url} alt="" className="size-20 rounded-lg border object-cover" />}
+        {urlValue && <img src={urlValue} alt="" className="size-20 rounded-lg border object-cover" />}
         <Button type="button" variant="outline" size="sm" disabled={busy} onClick={() => input.current?.click()}>
-          <ImageIcon /> {busy ? "Enviando…" : url ? "Trocar imagem" : "Enviar imagem"}
+          <ImageIcon /> {busy ? "Enviando…" : urlValue ? "Trocar imagem" : "Enviar imagem"}
         </Button>
-        {url && <Button type="button" variant="ghost" size="sm" onClick={() => setUrl("")}>Remover</Button>}
+        {urlValue && <Button type="button" variant="ghost" size="sm" onClick={() => setUrl("")}>Remover</Button>}
       </div>
       <input ref={input} type="file" accept="image/*" className="hidden" onChange={async (e) => {
         const file = e.target.files?.[0]; if (!file) return;
@@ -40,7 +57,7 @@ export function CoverField({ name, defaultValue, label = "Imagem de capa" }: { n
         try { setUrl(await uploadFile(file)); } catch (err) { alert(err instanceof Error ? err.message : "Falha no envio"); }
         setBusy(false); e.target.value = "";
       }} />
-      <input className="field" value={url} onChange={(e) => setUrl(e.target.value)} name={name} placeholder="Ou cole o endereço da imagem" />
+      <input className="field" value={urlValue} onChange={(e) => setUrl(e.target.value)} name={name} placeholder="Ou cole o endereço da imagem" />
     </div>
   );
 }

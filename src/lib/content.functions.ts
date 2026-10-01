@@ -116,6 +116,22 @@ export const deleteArticle = createServerFn({ method: "POST" }).inputValidator((
 const episodeSchema = z.object({ id: z.string().uuid().optional(), title: z.string().min(3), description: z.string(), cover_url: z.string().nullable(), youtube_url: z.string().nullable(), spotify_url: z.string().nullable(), soundcloud_url: z.string().nullable(), youtube_music_url: z.string().nullable(), amazon_music_url: z.string().nullable(), apple_music_url: z.string().nullable(), episode_number: z.number().nullable(), published: z.boolean() });
 export const saveEpisode = createServerFn({ method: "POST" }).inputValidator((d) => episodeSchema.parse(d)).handler(async ({ data }) => { await requireAdmin(); const db = await adminClient(); const { id: _id, ...fields } = data; const payload = { ...fields, slug: slugify(data.title), published_at: data.published ? new Date().toISOString() : null }; const result = data.id ? await db.from("podcast_episodes").update(payload).eq("id", data.id) : await db.from("podcast_episodes").insert(payload); if (result.error) throw new Error(result.error.message); return { ok: true }; });
 export const deleteEpisode = createServerFn({ method: "POST" }).inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d)).handler(async ({ data }) => { await requireAdmin(); const db = await adminClient(); const { error } = await db.from("podcast_episodes").delete().eq("id", data.id); if (error) throw new Error(error.message); return { ok: true }; });
+export const fetchEpisodeFromLink = createServerFn({ method: "POST" })
+  .inputValidator((d) => z.object({ url: z.string().min(10).max(2048) }).parse(d))
+  .handler(async ({ data }) => {
+    await requireAdmin();
+    const { episodeUrlFieldName, fetchEpisodeLinkMetadata } = await import("@/lib/episode-link-metadata");
+    const meta = await fetchEpisodeLinkMetadata(data.url);
+    const field = episodeUrlFieldName(meta.platform);
+    return {
+      title: meta.title,
+      description: meta.description,
+      cover_url: meta.cover_url,
+      platform: meta.platform,
+      urlField: field,
+      url: meta.normalizedUrl,
+    };
+  });
 export const sendContact = createServerFn({ method: "POST" }).inputValidator((d) => z.object({ name: z.string().min(2).max(120), email: z.string().email(), phone: z.string().max(30).optional(), message: z.string().min(10).max(5000) }).parse(d)).handler(async ({ data }) => { const db = await adminClient(); const { error } = await db.from("contact_messages").insert({ ...data, phone: data.phone || null }); if (error) throw new Error(error.message); return { ok: true }; });
 
 export const getLatestEpisode = createServerFn({ method: "GET" }).handler(async () => {
